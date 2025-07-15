@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tabarru.Services", "Tabarru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tabarru.Repositories", "Tabarru.Repositories\Tabarru.Repositories.csproj", "{C65F90ED-5DA0-4AD0-B3FE-F802D1982B88}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tabarru.Common", "Tabarru.Common\Tabarru.Common.csproj", "{60EF87B4-2284-4C82-B865-31BED3C0E050}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C65F90ED-5DA0-4AD0-B3FE-F802D1982B88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C65F90ED-5DA0-4AD0-B3FE-F802D1982B88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C65F90ED-5DA0-4AD0-B3FE-F802D1982B88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60EF87B4-2284-4C82-B865-31BED3C0E050}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60EF87B4-2284-4C82-B865-31BED3C0E050}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60EF87B4-2284-4C82-B865-31BED3C0E050}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60EF87B4-2284-4C82-B865-31BED3C0E050}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
