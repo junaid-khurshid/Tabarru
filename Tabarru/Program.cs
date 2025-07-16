@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using Tabarru.Repositories.DatabaseContext;
+
 namespace Tabarru
 {
     public class Program
@@ -12,6 +15,9 @@ namespace Tabarru
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+
+            builder.Services.AddDbContext<DbStorageContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
