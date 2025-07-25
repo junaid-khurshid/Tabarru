@@ -9,6 +9,6 @@ namespace Tabarru.Common.Const
     public class RolesAndPermissions
     {
         public const string Admin = "Admin";
-        public const string Community = "Community";
+        public const string Charity = "Charity";
     }
 }

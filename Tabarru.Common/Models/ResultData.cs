@@ -69,7 +69,18 @@ namespace Tabarru.Common.Models
         {
 
         }
+        public ResultData(T data, ResponseCode code)
+        {
+            Data = data;
+            Code = code;
+        }
 
+        public ResultData(T data, string message, ResponseCode code)
+        {
+            Data = data;
+            Message = message;
+            Code = code;
+        }
         public ResultData(T data)
         {
             Status = true;

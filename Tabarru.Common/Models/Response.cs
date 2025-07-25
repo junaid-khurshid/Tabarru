@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Net;
 using Tabarru.Common.Enums;
 
@@ -38,7 +39,35 @@ namespace Tabarru.Common.Models
         {
             StatusCode = (int)HttpStatusCode.OK;
         }
+        public Response(T data, ResponseCode code)
+            : base(new ResultData<T>(data, code))
+        {
+            StatusCode = (int)HttpStatusCode.OK;
+        }
 
+        public Response(T data, string message, ResponseCode code)
+            : base(new ResultData<T>(data, message, code))
+        {
+            StatusCode = (int)HttpStatusCode.OK;
+        }
+
+        public Response(HttpStatusCode httpStatusCode, string message)
+            : base(new ResultData<T>(message))
+        {
+            StatusCode = (int)httpStatusCode;
+        }
+
+        public Response(HttpStatusCode httpStatusCode, T data, ResponseCode code)
+            : base(new ResultData<T>(data, code))
+        {
+            StatusCode = (int)httpStatusCode;
+        }
+
+        public Response(HttpStatusCode httpStatusCode, T data, string message, ResponseCode code)
+            : base(new ResultData<T>(data, message, code))
+        {
+            StatusCode = (int)httpStatusCode;
+        }
         public Response(HttpStatusCode httpStatusCode)
             : base(new ResultData<T>())
         {
@@ -46,10 +75,10 @@ namespace Tabarru.Common.Models
             Value = null;
         }
 
-        public Response(HttpStatusCode httpStatusCode, string message)
-            : base(new ResultData<T>(message, httpStatusCode == HttpStatusCode.BadRequest ? ResponseCode.Error : ResponseCode.Message))
-        {
-            StatusCode = (int)httpStatusCode;
-        }
+        //public Response(HttpStatusCode httpStatusCode, string message)
+        //    : base(new ResultData<T>(message, httpStatusCode == HttpStatusCode.BadRequest ? ResponseCode.Error : ResponseCode.Message))
+        //{
+        //    StatusCode = (int)httpStatusCode;
+        //}
     }
 }

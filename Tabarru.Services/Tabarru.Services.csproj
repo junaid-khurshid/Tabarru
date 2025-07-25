@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Tabarru.Common\Tabarru.Common.csproj" />
+    <ProjectReference Include="..\Tabarru.Repositories\Tabarru.Repositories.csproj" />
+  </ItemGroup>
+
 </Project>
