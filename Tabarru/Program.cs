@@ -26,8 +26,13 @@ namespace Tabarru
             builder.Services.AddDbContext<DbStorageContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            //Services
             builder.Services.AddScoped<ICharityAccountService, CharityAccountService>();
+
+
+            //Repository
             builder.Services.AddScoped<ICharityRepository, CharityRepository>();
+            builder.Services.AddScoped<IEmailVerificationRepository, EmailVerificationRepository>();
 
             builder.Services.AddAuthentication(options =>
             {

@@ -65,14 +65,14 @@ namespace Tabarru.Services.Implementation
                 return new Response<LoginResponse>(HttpStatusCode.Unauthorized, new LoginResponse { EmailConfirmed = false }, "Invalid email or password. Please try again.", ResponseCode.Errors);
             }
 
-            return new Response<LoginResponse>(HttpStatusCode.NotFound, new LoginResponse
+            return new Response<LoginResponse>(HttpStatusCode.OK, new LoginResponse
             {
                 EmailConfirmed = true,
                 AccessToken = token.Item1,
                 RefreshToken = refreshToken.Item1,
                 ExpiresIn = token.Item2
             },
-                "Charity Not Found.", ResponseCode.Errors);
+                "Charity Login Successfully.", ResponseCode.Data);
         }
 
         public async Task<Response> Register(CharityDetailDto dto)
@@ -94,27 +94,31 @@ namespace Tabarru.Services.Implementation
                 EmailVerified = false,
             };
 
+            var addRegisterResult = await this.charityRepository.AddAsync(charity);
+
             var verificationDetails = await this.emailVerificationRepository.GetByEmailAsync(dto.Email);
             if (verificationDetails != null)
             {
                 return new Response(HttpStatusCode.BadRequest, $"Email {dto.Email} is already taken.");
             }
 
+            charity = await this.charityRepository.GetByEmailAsync(dto.Email);
             var token = GenerateRandomNumberTokenHelper.GenerateRandomNumberToken(6);
 
             var verification = new EmailVerificationDetails
             {
                 Email = dto.Email,
                 Token = token,
-                ExpiryTime = DateTime.UtcNow.AddMinutes(30)
+                ExpiryTime = DateTime.UtcNow.AddMinutes(30),
+                CharityId = charity.Id,
+                IsUsed =  false
             };
 
             //Send Email Work
 
-            var addEmailVerify = await this.emailVerificationRepository.AddAsync(verification);
-            var addRegisterResult = await this.charityRepository.AddAsync(charity);
+            var addEmailVerifyDetails = await this.emailVerificationRepository.AddAsync(verification);
 
-            if (!addRegisterResult || !addEmailVerify)
+            if (!addRegisterResult || !addEmailVerifyDetails)
                 return new Response(HttpStatusCode.BadRequest, "Charity Registration Failed");
 
             return new Response(HttpStatusCode.Created, "Charity Registered Successfully");
@@ -162,7 +166,16 @@ namespace Tabarru.Services.Implementation
 
             var res = await this.emailVerificationRepository.UpdateAsync(verificationDetails);
 
-            if (!res)
+            var charity = await this.charityRepository.GetByEmailAsync(request.Email);
+            if (charity == null)
+            {
+                return new Response(HttpStatusCode.BadRequest, "Email verification failed.");
+            }
+
+            charity.EmailVerified = true;
+            var updateCharity = await this.charityRepository.UpdateAsync(charity);
+
+            if (!res || !updateCharity)
             {
                 return new Response(HttpStatusCode.BadRequest, "Email verification failed.");
             }
