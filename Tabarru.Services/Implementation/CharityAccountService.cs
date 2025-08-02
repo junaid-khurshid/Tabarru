@@ -13,12 +13,15 @@ namespace Tabarru.Services.Implementation
     public class CharityAccountService : ICharityAccountService
     {
         private readonly ICharityRepository charityRepository;
+        private readonly IEmailVerificationRepository emailVerificationRepository;
         private readonly IConfiguration configuration;
 
         public CharityAccountService(ICharityRepository charityRepository,
+            IEmailVerificationRepository emailVerificationRepository,
             IConfiguration configuration)
         {
             this.charityRepository = charityRepository;
+            this.emailVerificationRepository = emailVerificationRepository;
             this.configuration = configuration;
         }
 
@@ -31,7 +34,6 @@ namespace Tabarru.Services.Implementation
                 Email = email,
                 KycStatus = charity.KycStatus,
                 Role = charity.Role,
-
             };
         }
 
@@ -73,11 +75,11 @@ namespace Tabarru.Services.Implementation
                 "Charity Not Found.", ResponseCode.Errors);
         }
 
-        public async Task<ResultData> Register(CharityDetailDto dto)
+        public async Task<Response> Register(CharityDetailDto dto)
         {
             var alreadyAddedCharity = await this.charityRepository.GetByEmailAsync(dto.Email);
             if (alreadyAddedCharity != null)
-                return new ResultData(false, $"Email {dto.Email} is already taken.");
+                return new Response(HttpStatusCode.BadRequest, $"Email {dto.Email} is already taken.");
 
 
             (byte[], byte[]) hashSalt = GenerateHashAndSaltHelper.CreatePasswordHash(dto.Password);
@@ -91,12 +93,81 @@ namespace Tabarru.Services.Implementation
                 Role = dto.Role,
                 EmailVerified = false,
             };
-            var addRes = await this.charityRepository.AddAsync(charity);
-            if (!addRes)
-                return new ResultData(false, "Charity Registration Failed");
 
-            return new ResultData(addRes, "Charity Registered Successfully");
+            var verificationDetails = await this.emailVerificationRepository.GetByEmailAsync(dto.Email);
+            if (verificationDetails != null)
+            {
+                return new Response(HttpStatusCode.BadRequest, $"Email {dto.Email} is already taken.");
+            }
 
+            var token = GenerateRandomNumberTokenHelper.GenerateRandomNumberToken(6);
+
+            var verification = new EmailVerificationDetails
+            {
+                Email = dto.Email,
+                Token = token,
+                ExpiryTime = DateTime.UtcNow.AddMinutes(30)
+            };
+
+            //Send Email Work
+
+            var addEmailVerify = await this.emailVerificationRepository.AddAsync(verification);
+            var addRegisterResult = await this.charityRepository.AddAsync(charity);
+
+            if (!addRegisterResult || !addEmailVerify)
+                return new Response(HttpStatusCode.BadRequest, "Charity Registration Failed");
+
+            return new Response(HttpStatusCode.Created, "Charity Registered Successfully");
+        }
+
+
+        public async Task<Response> ReGenerateEmailVerificationTokenByEmail(string email)
+        {
+            var verificationDetails = await this.emailVerificationRepository.GetByEmailAsync(email);
+
+
+
+            var token = GenerateRandomNumberTokenHelper.GenerateRandomNumberToken(6);
+
+            var verification = new EmailVerificationDetails
+            {
+                Email = email,
+                Token = token,
+                ExpiryTime = DateTime.UtcNow.AddMinutes(30)
+            };
+
+            var res = await this.emailVerificationRepository.AddAsync(verification);
+
+            if (!res)
+            {
+                return new Response(HttpStatusCode.Created, "Confirmation email failed.");
+            }
+
+            return new Response(HttpStatusCode.BadRequest, "Confirmation email sent successfully.");
+
+            //if (!res)
+            //    return new ResultData(false, "Confirmation email failed.");
+
+            //return new ResultData(res, "Confirmation email sent successfully.");
+        }
+
+        public async Task<Response> VerifyToken(VerifyRequestDto request)
+        {
+            var verificationDetails = await this.emailVerificationRepository.GetByEmailAsync(request.Email);
+
+            if (verificationDetails == null || verificationDetails.ExpiryTime < DateTime.UtcNow)
+                return new Response(HttpStatusCode.BadRequest, "Invalid or expired token.");
+
+            verificationDetails.IsUsed = true;
+
+            var res = await this.emailVerificationRepository.UpdateAsync(verificationDetails);
+
+            if (!res)
+            {
+                return new Response(HttpStatusCode.BadRequest, "Email verification failed.");
+            }
+
+            return new Response(HttpStatusCode.Accepted, "Email verified successfully.");
         }
 
         //public async Task<Response<LoginResponse>> GenerateRefreshToken(string token)

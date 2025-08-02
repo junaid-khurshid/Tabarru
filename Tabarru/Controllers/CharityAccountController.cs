@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Net;
+﻿using Microsoft.AspNetCore.Mvc;
 using Tabarru.Common.Models;
 using Tabarru.RequestModels;
 using Tabarru.Services.IServices;
-using Tabarru.Services.Models;
 
 namespace Tabarru.Controllers
 {
@@ -23,14 +19,7 @@ namespace Tabarru.Controllers
         [HttpPost("register")]
         public async Task<Response> Register(RegisterCharityDetail registerCharityDetail)
         {
-            var result = await this.charityAccountService.Register(registerCharityDetail.MapToDto());
-
-            if (result.Status)
-            {
-                return new Response(HttpStatusCode.Created, result.Message);
-            }
-
-            return new Response(HttpStatusCode.BadRequest, result.Message);
+           return await this.charityAccountService.Register(registerCharityDetail.MapToDto());
         }
 
         [HttpPost("login")]
@@ -38,6 +27,19 @@ namespace Tabarru.Controllers
         {
             return await this.charityAccountService.Login(loginRequest.MapToDto());
         }
+
+        [HttpPost("confirmation/resend")]
+        public async Task<Response> ReGenerateEmailVerificationToken([FromBody] string email)
+        {
+            return await this.charityAccountService.ReGenerateEmailVerificationTokenByEmail(email);
+        }
+
+        [HttpPost("confirmation")]
+        public async Task<IActionResult> VerifyToken([FromBody] VerifyRequest request)
+        {
+            return await this.charityAccountService.VerifyToken(request.MapToDto());
+        }
+
 
         [HttpPost("refresh")]
         public Response<LoginResponse> Refresh([FromBody] string token)

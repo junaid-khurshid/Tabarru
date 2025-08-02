@@ -17,6 +17,7 @@ namespace Tabarru.Repositories.DatabaseContext
         }
 
         public DbSet<Charity> Charity { get; set; }
+        public DbSet<EmailVerificationDetails> EmailVerificationDetails { get; set; }
 
         public override int SaveChanges()
         {
