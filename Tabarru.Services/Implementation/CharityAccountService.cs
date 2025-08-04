@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Net;
 using Tabarru.Common.Enums;
 using Tabarru.Common.Helper;
 using Tabarru.Common.Models;
+using Tabarru.Repositories.DatabaseContext;
 using Tabarru.Repositories.IRepository;
 using Tabarru.Repositories.Models;
 using Tabarru.Services.IServices;
@@ -14,14 +16,20 @@ namespace Tabarru.Services.Implementation
     {
         private readonly ICharityRepository charityRepository;
         private readonly IEmailVerificationRepository emailVerificationRepository;
+        private readonly IEmailMessageService emailMessageService;
+        private readonly DbContext dbContext;
         private readonly IConfiguration configuration;
 
         public CharityAccountService(ICharityRepository charityRepository,
             IEmailVerificationRepository emailVerificationRepository,
+            IEmailMessageService emailMessageService,
+            DbStorageContext dbContext,
             IConfiguration configuration)
         {
             this.charityRepository = charityRepository;
             this.emailVerificationRepository = emailVerificationRepository;
+            this.emailMessageService = emailMessageService;
+            this.dbContext = dbContext;
             this.configuration = configuration;
         }
 
@@ -77,51 +85,81 @@ namespace Tabarru.Services.Implementation
 
         public async Task<Response> Register(CharityDetailDto dto)
         {
-            var alreadyAddedCharity = await this.charityRepository.GetByEmailAsync(dto.Email);
-            if (alreadyAddedCharity != null)
-                return new Response(HttpStatusCode.BadRequest, $"Email {dto.Email} is already taken.");
 
-
-            (byte[], byte[]) hashSalt = GenerateHashAndSaltHelper.CreatePasswordHash(dto.Password);
-
-            var charity = new Charity
+            using (var transaction = await dbContext.Database.BeginTransactionAsync())
             {
-                Email = dto.Email,
-                KycStatus = false,
-                PasswordHash = hashSalt.Item2,
-                Salt = hashSalt.Item1,
-                Role = dto.Role,
-                EmailVerified = false,
-            };
+                try
+                {
+                    var alreadyAddedCharity = await this.charityRepository.GetByEmailAsync(dto.Email);
+                    if (alreadyAddedCharity != null)
+                    {
+                        await transaction.RollbackAsync();
+                        return new Response(HttpStatusCode.BadRequest, $"Email {dto.Email} is already taken.");
+                    }
 
-            var addRegisterResult = await this.charityRepository.AddAsync(charity);
+                    (byte[], byte[]) hashSalt = GenerateHashAndSaltHelper.CreatePasswordHash(dto.Password);
 
-            var verificationDetails = await this.emailVerificationRepository.GetByEmailAsync(dto.Email);
-            if (verificationDetails != null)
-            {
-                return new Response(HttpStatusCode.BadRequest, $"Email {dto.Email} is already taken.");
+                    var charity = new Charity
+                    {
+                        Email = dto.Email,
+                        KycStatus = false,
+                        PasswordHash = hashSalt.Item2,
+                        Salt = hashSalt.Item1,
+                        Role = dto.Role.ToUpper(),
+                        EmailVerified = false,
+                    };
+
+                    var addRegisterResult = await this.charityRepository.AddAsync(charity);
+
+                    var verificationDetails = await this.emailVerificationRepository.GetByEmailAsync(dto.Email);
+                    if (verificationDetails != null)
+                    {
+                        await transaction.RollbackAsync();
+                        return new Response(HttpStatusCode.BadRequest, $"Email {dto.Email} is already taken.");
+                    }
+
+                    charity = await this.charityRepository.GetByEmailAsync(dto.Email);
+                    var emailVerificationCode = GenerateRandomNumberTokenHelper.GenerateRandomNumberToken(6);
+
+                    var emailVerification = new EmailVerificationDetails
+                    {
+                        Email = dto.Email,
+                        Token = emailVerificationCode,
+                        ExpiryTime = DateTime.UtcNow.AddMinutes(30),
+                        CharityId = charity?.Id,
+                        IsUsed = false
+                    };
+
+                    string htmlPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Tabarru.Common", "HtmlTemplates", "EmailVerificationBody.html");
+                    string htmlContent = File.ReadAllText(htmlPath);
+                    string finalHtml = htmlContent.Replace("{{CODE}}", emailVerificationCode);
+
+                    //Send Email Work
+                    var success = await this.emailMessageService.SendEmailAsync(
+                    dto.Email,
+                    "Email Verification",
+                    finalHtml
+                    );
+
+                    var addEmailVerifyDetails = await this.emailVerificationRepository.AddAsync(emailVerification);
+                    await transaction.CommitAsync();
+
+                    if (!addRegisterResult || !addEmailVerifyDetails)
+                    {
+                        await transaction.RollbackAsync();
+                        return new Response(HttpStatusCode.BadRequest, "Charity Registration Failed");
+                    }
+
+                    return new Response(HttpStatusCode.Created, "Charity Registered Successfully");
+                }
+
+                catch (Exception ex)
+                {
+                    // Rollback if any error occurs
+                    await transaction.RollbackAsync();
+                    throw ex;
+                }
             }
-
-            charity = await this.charityRepository.GetByEmailAsync(dto.Email);
-            var token = GenerateRandomNumberTokenHelper.GenerateRandomNumberToken(6);
-
-            var verification = new EmailVerificationDetails
-            {
-                Email = dto.Email,
-                Token = token,
-                ExpiryTime = DateTime.UtcNow.AddMinutes(30),
-                CharityId = charity.Id,
-                IsUsed =  false
-            };
-
-            //Send Email Work
-
-            var addEmailVerifyDetails = await this.emailVerificationRepository.AddAsync(verification);
-
-            if (!addRegisterResult || !addEmailVerifyDetails)
-                return new Response(HttpStatusCode.BadRequest, "Charity Registration Failed");
-
-            return new Response(HttpStatusCode.Created, "Charity Registered Successfully");
         }
 
 
@@ -129,14 +167,12 @@ namespace Tabarru.Services.Implementation
         {
             var verificationDetails = await this.emailVerificationRepository.GetByEmailAsync(email);
 
-
-
-            var token = GenerateRandomNumberTokenHelper.GenerateRandomNumberToken(6);
+            var emailVerificationCode = GenerateRandomNumberTokenHelper.GenerateRandomNumberToken(6);
 
             var verification = new EmailVerificationDetails
             {
                 Email = email,
-                Token = token,
+                Token = emailVerificationCode,
                 ExpiryTime = DateTime.UtcNow.AddMinutes(30)
             };
 
@@ -148,16 +184,11 @@ namespace Tabarru.Services.Implementation
             }
 
             return new Response(HttpStatusCode.BadRequest, "Confirmation email sent successfully.");
-
-            //if (!res)
-            //    return new ResultData(false, "Confirmation email failed.");
-
-            //return new ResultData(res, "Confirmation email sent successfully.");
         }
 
         public async Task<Response> VerifyToken(VerifyRequestDto request)
         {
-            var verificationDetails = await this.emailVerificationRepository.GetByEmailAsync(request.Email);
+            var verificationDetails = await this.emailVerificationRepository.GetByEmailAndIsNotUsedAsync(request.Email);
 
             if (verificationDetails == null || verificationDetails.ExpiryTime < DateTime.UtcNow)
                 return new Response(HttpStatusCode.BadRequest, "Invalid or expired token.");

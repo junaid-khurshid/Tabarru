@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Mailjet.Api" Version="2.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Tabarru.Common\Tabarru.Common.csproj" />
     <ProjectReference Include="..\Tabarru.Repositories\Tabarru.Repositories.csproj" />
   </ItemGroup>

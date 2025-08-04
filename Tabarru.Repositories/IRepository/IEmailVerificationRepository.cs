@@ -13,5 +13,6 @@ namespace Tabarru.Repositories.IRepository
         Task<EmailVerificationDetails> GetByEmailAsync(string emailAddress);
         Task<bool> AddAsync(EmailVerificationDetails emailVerificationDetails);
         Task<bool> UpdateAsync(EmailVerificationDetails emailVerificationDetails);
+        Task<EmailVerificationDetails> GetByEmailAndIsNotUsedAsync(string emailAddress);
     }
 }

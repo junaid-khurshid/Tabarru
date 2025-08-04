@@ -1,11 +1,14 @@
-﻿using Tabarru.Services.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Tabarru.Services.Models;
 
 namespace Tabarru.RequestModels
 {
     public class VerifyRequest
     {
-        public string Email { get; set; } = null!;
-        public string Token { get; set; } = null!;
+        [Required(ErrorMessage = "REQUIRED")]
+        public string Email { get; set; }
+        [Required(ErrorMessage = "REQUIRED")]
+        public string Token { get; set; }
     }
 
     static class VerifyRequestExtension

@@ -27,33 +27,29 @@ namespace Tabarru
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             //Services
-            builder.Services.AddScoped<ICharityAccountService, CharityAccountService>();
-
+            builder.Services.AddTransient<ICharityAccountService, CharityAccountService>();
+            builder.Services.AddTransient<IEmailMessageService, EmailMessageService>();
 
             //Repository
-            builder.Services.AddScoped<ICharityRepository, CharityRepository>();
-            builder.Services.AddScoped<IEmailVerificationRepository, EmailVerificationRepository>();
+            builder.Services.AddTransient<ICharityRepository, CharityRepository>();
+            builder.Services.AddTransient<IEmailVerificationRepository, EmailVerificationRepository>();
 
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-                };
-            });
-
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+             .AddJwtBearer(options =>
+             {
+                 var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
+                 options.TokenValidationParameters = new TokenValidationParameters
+                 {
+                     ValidateIssuer = true,
+                     ValidateAudience = true,
+                     ValidateLifetime = true,
+                     ValidateIssuerSigningKey = true,
+                     ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                     ValidAudience = builder.Configuration["Jwt:Audience"],
+                     IssuerSigningKey = new SymmetricSecurityKey(key)
+                 };
+             });
+            builder.Services.AddAuthorization();
 
             // Add Swagger services
             builder.Services.AddEndpointsApiExplorer();

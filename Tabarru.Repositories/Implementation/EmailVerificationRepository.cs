@@ -25,6 +25,11 @@ namespace Tabarru.Repositories.Implementation
             return await dbStorageContext.EmailVerificationDetails.FirstOrDefaultAsync(x => x.Email.Equals(emailAddress));
         }
 
+        public async Task<EmailVerificationDetails> GetByEmailAndIsNotUsedAsync(string emailAddress)
+        {
+            return await dbStorageContext.EmailVerificationDetails.FirstOrDefaultAsync(x => x.Email.Equals(emailAddress) && !x.IsUsed);
+        }
+
         public async Task<EmailVerificationDetails> GetByIdAsync(string emailVerificationId)
         {
             return await dbStorageContext.EmailVerificationDetails.FindAsync(emailVerificationId);

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Tabarru.Common.Models;
 using Tabarru.RequestModels;
 using Tabarru.Services.IServices;
@@ -38,6 +39,20 @@ namespace Tabarru.Controllers
         public async Task<IActionResult> VerifyToken([FromBody] VerifyRequest request)
         {
             return await this.charityAccountService.VerifyToken(request.MapToDto());
+        }
+
+        [Authorize(Roles = "ADMIN")]
+        [HttpGet("admin")]
+        public IActionResult AdminEndpoint()
+        {
+            return Ok("You are an admin.");
+        }
+
+        [Authorize(Roles = "USER, ADMIN")]
+        [HttpGet("user")]
+        public IActionResult UserEndpoint()
+        {
+            return Ok("You are a user.");
         }
 
 
