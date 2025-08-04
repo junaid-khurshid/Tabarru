@@ -40,7 +40,10 @@ namespace Tabarru.Controllers
         {
             return await this.charityAccountService.VerifyToken(request.MapToDto());
         }
-
+        /// <summary>
+        ///  for testing purpose
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "ADMIN")]
         [HttpGet("admin")]
         public IActionResult AdminEndpoint()
