@@ -35,7 +35,7 @@ namespace Tabarru.Controllers
             return await this.charityAccountService.ReGenerateEmailVerificationTokenByEmail(email);
         }
 
-        [HttpPost("confirmation")]
+        [HttpPost("confirmation/email")]
         public async Task<IActionResult> VerifyToken([FromBody] VerifyRequest request)
         {
             return await this.charityAccountService.VerifyToken(request.MapToDto());
