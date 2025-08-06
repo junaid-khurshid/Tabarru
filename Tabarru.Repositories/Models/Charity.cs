@@ -8,10 +8,17 @@ namespace Tabarru.Repositories.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
+        [Required]
+        [MaxLength(100)]
         public string Email { get; set; }
+
         public byte[] Salt { get; set; }
         public byte[] PasswordHash { get; set; }
+
+        [Required]
+        [MaxLength(100)]
         public string Role { get; set; }
+
         public bool KycStatus { get; set; }
         public bool EmailVerified { get; set; }
 
