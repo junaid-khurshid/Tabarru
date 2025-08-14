@@ -180,10 +180,10 @@ namespace Tabarru.Services.Implementation
 
             if (!res)
             {
-                return new Response(HttpStatusCode.Created, "Confirmation email failed.");
+                return new Response(HttpStatusCode.BadRequest, "Confirmation email failed.");
             }
 
-            return new Response(HttpStatusCode.BadRequest, "Confirmation email sent successfully.");
+            return new Response(HttpStatusCode.Created, "Confirmation email sent successfully.");
         }
 
         public async Task<Response> VerifyToken(VerifyRequestDto request)

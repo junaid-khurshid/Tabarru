@@ -1,0 +1,16 @@
+﻿using Tabarru.Common.Models;
+using Tabarru.Services.Models;
+
+namespace Tabarru.Services.IServices
+{
+    public interface ICampaignService
+    {
+        Task<Response> CreateAsync(CampaignDto dto);
+
+        Task<Response<IList<CampaignReadDto>>> GetAllByCharityIDAsync(string CharityId);
+
+        Task<Response<CampaignReadDto>> GetByIdAsync(string id);
+
+        Task<Response<CampaignReadDto>> UpdateStatusAsync(CampaignUpdateStatusDto dto);
+    }
+}

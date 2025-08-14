@@ -29,10 +29,12 @@ namespace Tabarru
             //Services
             builder.Services.AddTransient<ICharityAccountService, CharityAccountService>();
             builder.Services.AddTransient<IEmailMessageService, EmailMessageService>();
+            builder.Services.AddScoped<ICampaignService, CampaignService>();
 
             //Repository
             builder.Services.AddTransient<ICharityRepository, CharityRepository>();
             builder.Services.AddTransient<IEmailVerificationRepository, EmailVerificationRepository>();
+            builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
              .AddJwtBearer(options =>

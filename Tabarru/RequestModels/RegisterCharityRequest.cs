@@ -3,7 +3,7 @@ using Tabarru.Services.Models;
 
 namespace Tabarru.RequestModels
 {
-    public class RegisterCharityDetail
+    public class RegisterCharityRequest
     {
         [Required(ErrorMessage = "REQUIRED"), EmailAddress(ErrorMessage = "Please enter a valid email address.")]
         public string Email { get; set; }
@@ -18,7 +18,7 @@ namespace Tabarru.RequestModels
 
     static class CharityDetailExtension
     {
-        public static CharityDetailDto MapToDto(this RegisterCharityDetail userDetail)
+        public static CharityDetailDto MapToDto(this RegisterCharityRequest userDetail)
         {
             return new CharityDetailDto
             {

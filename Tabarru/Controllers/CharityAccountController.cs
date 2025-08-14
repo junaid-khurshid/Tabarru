@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tabarru.Common.Helper;
 using Tabarru.Common.Models;
 using Tabarru.RequestModels;
 using Tabarru.Services.IServices;
@@ -18,7 +19,7 @@ namespace Tabarru.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<Response> Register(RegisterCharityDetail registerCharityDetail)
+        public async Task<Response> Register(RegisterCharityRequest registerCharityDetail)
         {
            return await this.charityAccountService.Register(registerCharityDetail.MapToDto());
         }
@@ -55,6 +56,9 @@ namespace Tabarru.Controllers
         [HttpGet("user")]
         public IActionResult UserEndpoint()
         {
+            var id = TokenClaimHelper.GetId(User);
+            var email = TokenClaimHelper.GetEmail(User);
+            var role = TokenClaimHelper.GetRole(User);
             return Ok("You are a user.");
         }
 
