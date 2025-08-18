@@ -35,4 +35,8 @@
     <ProjectReference Include="..\Tabarru.Services\Tabarru.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Defaults\" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,52 @@
+[
+  {
+    "Id": 10,
+    "name": "Start-up",
+    "price": "Free",
+    "billingCycle": null,
+    "features": [
+      "Online Campaigns",
+      "5x Fixed Devices",
+      "Portable roaming devices",
+      "All major payment methods",
+      "QR Codes",
+      "Works with sumUP (payment card processing)",
+      "Works with Stripe",
+      "GDPR compliant service"
+    ]
+  },
+  {
+    "Id": 20,
+    "name": "Standard",
+    "price": "£25",
+    "billingCycle": "Month",
+    "features": [
+      "All in FREE plus",
+      "3x fixed kiosks",
+      "Mobile Quick Donate App running on volunteer’s Android tablet/phone",
+      "Turnover from £20,000 to £50,000/year",
+      "Custom layout themes and branding",
+      "Customisable welcome screen with campaign image, video or slides",
+      "Customisable Thanks screen",
+      "Customisable Welcome screen",
+      "Transaction change recovery option",
+      "Gift Aid"
+    ]
+  },
+  {
+    "Id": 30,
+    "name": "Premium",
+    "price": "£50",
+    "billingCycle": "Month",
+    "features": [
+      "All in FREE and Standard plus",
+      "Membership fees module",
+      "Tuition fees module",
+      "Multiple campaign templates",
+      "4x fixed kiosks",
+      "Turnover above £50,000 to £200,000",
+      "Works with Stripe",
+      "GDPR compliant service"
+    ]
+  }
+]

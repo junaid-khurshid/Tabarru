@@ -21,6 +21,9 @@ namespace Tabarru.Repositories.Models
 
         public bool KycStatus { get; set; }
         public bool EmailVerified { get; set; }
+        public bool IsKycVerified { get; set; }
+        public bool IsPackageVerified { get; set; }
+        public int PackageId { get; set; }
 
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
