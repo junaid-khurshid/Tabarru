@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 using Tabarru.Repositories.Models;
 
 namespace Tabarru.Repositories.DatabaseContext
@@ -14,12 +15,24 @@ namespace Tabarru.Repositories.DatabaseContext
             builder.AddModelCreatingProfile();
 
             base.OnModelCreating(builder);
+
+            // Composite key for join table
+            builder.Entity<TemplateCampaign>()
+                .HasKey(tc => new { tc.TemplateId, tc.CampaignId });
+
+            // Relationships
+            builder.Entity<TemplateCampaign>()
+                .HasOne(tc => tc.Template)
+                .WithMany(t => t.TemplateCampaigns)
+                .HasForeignKey(tc => tc.TemplateId);
         }
 
         public DbSet<Charity> Charity { get; set; }
         public DbSet<EmailVerificationDetails> EmailVerificationDetails { get; set; }
         public DbSet<Campaign> Campaigns { get; set; }
         public DbSet<PackageDetails> PackageDetails { get; set; }
+        public DbSet<Template> Templates { get; set; }
+        public DbSet<TemplateCampaign> TemplateCampaigns { get; set; }
 
 
         public override int SaveChanges()

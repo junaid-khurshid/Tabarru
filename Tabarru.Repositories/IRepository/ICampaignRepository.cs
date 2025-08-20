@@ -6,6 +6,7 @@ namespace Tabarru.Repositories.IRepository
     {
         Task<bool> AddAsync(Campaign campaign);
         Task<Campaign> GetByIdAsync(string Id);
+        Task<bool> AnyByIdAsync(string Id);
         Task<IEnumerable<Campaign>> GetAllByCharityIdAsync(string CharityId);
         Task<Campaign> GetAllByCharityIdAndDefaultOneOnlyAsync(string CharityId);
         Task<Campaign> GetByNameAndCharityIdAsync(string Name, string CharityId);

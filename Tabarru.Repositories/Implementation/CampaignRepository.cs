@@ -37,6 +37,9 @@ namespace Tabarru.Repositories.Implementation
 
         public async Task<Campaign> GetByIdAsync(string Id)
             => await dbStorageContext.Campaigns.FirstOrDefaultAsync(c => c.Id == Id);
+        
+        public async Task<bool> AnyByIdAsync(string Id)
+            => await dbStorageContext.Campaigns.AnyAsync(c => c.Id == Id);
 
         public async Task<Campaign> GetByNameAndCharityIdAsync(string Name, string CharityId)
             => await dbStorageContext.Campaigns.FirstOrDefaultAsync(c => c.Name == Name && c.CharityId.Equals(CharityId));

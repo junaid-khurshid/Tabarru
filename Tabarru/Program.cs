@@ -33,12 +33,15 @@ namespace Tabarru
             builder.Services.AddTransient<IEmailMessageService, EmailMessageService>();
             builder.Services.AddScoped<ICampaignService, CampaignService>();
             builder.Services.AddScoped<IPackageService, PackageService>();
+            builder.Services.AddScoped<ITemplateService, TemplateService>();
 
             //Repository
             builder.Services.AddTransient<ICharityRepository, CharityRepository>();
             builder.Services.AddTransient<IEmailVerificationRepository, EmailVerificationRepository>();
             builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
             builder.Services.AddScoped<IPackageRepository, PackageRepository>();
+            builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
+            builder.Services.AddScoped<ITemplateCampaignRepository, TemplateCampaignRepository>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
              .AddJwtBearer(options =>
