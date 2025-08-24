@@ -43,6 +43,7 @@ namespace Tabarru.Services.Implementation
                 CharityId = dto.CharityId,
                 Name = dto.Name.Trim(),
                 Icon = await dto.Icon.ConvertFileToBase64Async(),
+                ListOfAmounts = dto.ListOfAmounts
                 IsEnabled = dto.IsEnabled,
                 IsDefault = dto.IsDefault,
             };
@@ -60,15 +61,7 @@ namespace Tabarru.Services.Implementation
         public async Task<Response<IList<CampaignReadDto>>> GetAllByCharityIDAsync(string CharityId)
         {
             var campaigns = await campaignRepository.GetAllByCharityIdAsync(CharityId);
-            var campaignsList = campaigns.Select(i => new CampaignReadDto
-            {
-                Id = i.Id,
-                Name = i.Name,
-                Icon = i.Icon,
-                IsEnabled = i.IsEnabled,
-                IsDefault = i.IsDefault,
-                CharityId = CharityId
-            }).ToList();
+            var campaignsList = campaigns.Select(i => i.MapToDto()).ToList();
 
             return new Response<IList<CampaignReadDto>>(HttpStatusCode.OK, campaignsList, ResponseCode.Data);
         }

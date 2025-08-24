@@ -19,7 +19,10 @@ namespace Tabarru.Repositories.Models
         [Required]
         public string Icon { get; set; }
 
-        public bool IsEnabled { get; set; } = true;
+        [Required]
+        public string ListOfAmounts { get; set; } = null!;
+
+        public bool IsEnabled { get; set; } = false;
 
         public bool IsDefault { get; set; } = false;
     }

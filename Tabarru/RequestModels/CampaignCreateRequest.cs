@@ -13,6 +13,9 @@ namespace Tabarru.RequestModels
         [ValidateFile(200, 2000)]
         public IFormFile Icon { get; set; }
 
+        [Required(ErrorMessage = "REQUIRED")]
+        public string ListOfAmounts { get; set; } = null!;
+
         public bool IsEnabled { get; set; } = true;
         public bool IsDefault { get; set; } = false;
     }
