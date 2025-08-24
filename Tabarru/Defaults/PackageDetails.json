@@ -18,13 +18,13 @@
   {
     "Id": 20,
     "name": "Standard",
-    "price": "£25",
+    "price": "$25",
     "billingCycle": "Month",
     "features": [
       "All in FREE plus",
       "3x fixed kiosks",
-      "Mobile Quick Donate App running on volunteer’s Android tablet/phone",
-      "Turnover from £20,000 to £50,000/year",
+      "Mobile Quick Donate App running on volunteerï¿½s Android tablet/phone",
+      "Turnover from ï¿½20,000 to ï¿½50,000/year",
       "Custom layout themes and branding",
       "Customisable welcome screen with campaign image, video or slides",
       "Customisable Thanks screen",
@@ -36,7 +36,7 @@
   {
     "Id": 30,
     "name": "Premium",
-    "price": "£50",
+    "price": "$50",
     "billingCycle": "Month",
     "features": [
       "All in FREE and Standard plus",
@@ -44,7 +44,7 @@
       "Tuition fees module",
       "Multiple campaign templates",
       "4x fixed kiosks",
-      "Turnover above £50,000 to £200,000",
+      "Turnover above ï¿½50,000 to ï¿½200,000",
       "Works with Stripe",
       "GDPR compliant service"
     ]

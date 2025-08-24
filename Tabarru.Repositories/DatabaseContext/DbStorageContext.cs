@@ -25,6 +25,14 @@ namespace Tabarru.Repositories.DatabaseContext
                 .HasOne(tc => tc.Template)
                 .WithMany(t => t.TemplateCampaigns)
                 .HasForeignKey(tc => tc.TemplateId);
+
+            builder.Entity<PackageDetails>()
+                .Property(p => p.Id)
+                .ValueGeneratedNever();
+
+            builder.Entity<PackageDetails>()
+                .Property(p => p.FeaturesJson)
+                .HasDefaultValue("[]"); // Default empty array
         }
 
         public DbSet<Charity> Charity { get; set; }

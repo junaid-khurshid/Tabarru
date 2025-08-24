@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tabarru.Common.Models;
-using Tabarru.Repositories.Models;
 using Tabarru.Services.IServices;
+using Tabarru.Services.Models;
 
 namespace Tabarru.Controllers
 {
@@ -17,7 +17,7 @@ namespace Tabarru.Controllers
         }
 
         [HttpGet]
-        public async Task<Response<IList<PackageDetails>>> GetPackages()
+        public async Task<Response<IList<PackageDetailsDto>>> GetPackages()
         {
             return await this.packageService.GetAllPackagesAsync();
         }

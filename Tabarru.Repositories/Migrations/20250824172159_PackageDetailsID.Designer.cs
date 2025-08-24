@@ -12,8 +12,8 @@ using Tabarru.Repositories.DatabaseContext;
 namespace Tabarru.Repositories.Migrations
 {
     [DbContext(typeof(DbStorageContext))]
-    [Migration("20250818062435_PackageDB and few changes")]
-    partial class PackageDBandfewchanges
+    [Migration("20250824172159_PackageDetailsID")]
+    partial class PackageDetailsID
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,10 @@ namespace Tabarru.Repositories.Migrations
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ListOfAmounts")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -155,21 +159,19 @@ namespace Tabarru.Repositories.Migrations
             modelBuilder.Entity("Tabarru.Repositories.Models.PackageDetails", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("BillingCycle")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
 
-                    b.PrimitiveCollection<string>("Features")
+                    b.Property<string>("FeaturesJson")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("[]");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -185,6 +187,77 @@ namespace Tabarru.Repositories.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PackageDetails");
+                });
+
+            modelBuilder.Entity("Tabarru.Repositories.Models.Template", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CharityId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTimeOffset>("UpdatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Templates");
+                });
+
+            modelBuilder.Entity("Tabarru.Repositories.Models.TemplateCampaign", b =>
+                {
+                    b.Property<string>("TemplateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CampaignId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("UpdatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("TemplateId", "CampaignId");
+
+                    b.HasIndex("CampaignId");
+
+                    b.ToTable("TemplateCampaigns");
+                });
+
+            modelBuilder.Entity("Tabarru.Repositories.Models.TemplateCampaign", b =>
+                {
+                    b.HasOne("Tabarru.Repositories.Models.Campaign", "Campaign")
+                        .WithMany()
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tabarru.Repositories.Models.Template", "Template")
+                        .WithMany("TemplateCampaigns")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Campaign");
+
+                    b.Navigation("Template");
+                });
+
+            modelBuilder.Entity("Tabarru.Repositories.Models.Template", b =>
+                {
+                    b.Navigation("TemplateCampaigns");
                 });
 #pragma warning restore 612, 618
         }

@@ -21,7 +21,7 @@ namespace Tabarru.Services.Models
             return new CampaignReadDto
             {
                 Id = campaign.Id,
-                CharityId = campaign.CharityId
+                CharityId = campaign.CharityId,
                 Name = campaign.Name,
                 Icon = campaign.Icon,
                 ListOfAmounts = campaign.ListOfAmounts,

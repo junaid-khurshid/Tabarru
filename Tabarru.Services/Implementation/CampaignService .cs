@@ -43,7 +43,7 @@ namespace Tabarru.Services.Implementation
                 CharityId = dto.CharityId,
                 Name = dto.Name.Trim(),
                 Icon = await dto.Icon.ConvertFileToBase64Async(),
-                ListOfAmounts = dto.ListOfAmounts
+                ListOfAmounts = dto.ListOfAmounts,
                 IsEnabled = dto.IsEnabled,
                 IsDefault = dto.IsDefault,
             };

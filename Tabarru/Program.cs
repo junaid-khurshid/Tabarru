@@ -1,9 +1,9 @@
-
+﻿
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System.Text;
+using System.Text.Json;
 using Tabarru.Repositories.DatabaseContext;
 using Tabarru.Repositories.Implementation;
 using Tabarru.Repositories.IRepository;
@@ -108,10 +108,16 @@ namespace Tabarru
             }
         }
 
-        private static T GetDefaultValues<T>(string path)
+        private static T GetDefaultValues<T>(string filePath)
         {
-            string jsonString = File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<T>(jsonString);
+            var json = File.ReadAllText(filePath);
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true // 👈 allows "features" → Features
+            };
+
+            return System.Text.Json.JsonSerializer.Deserialize<T>(json, options)!;
         }
 
     }

@@ -2,8 +2,8 @@
 using Tabarru.Common.Enums;
 using Tabarru.Common.Models;
 using Tabarru.Repositories.IRepository;
-using Tabarru.Repositories.Models;
 using Tabarru.Services.IServices;
+using Tabarru.Services.Models;
 
 namespace Tabarru.Services.Implementation
 {
@@ -16,9 +16,10 @@ namespace Tabarru.Services.Implementation
             this.packageRepository = packageRepository;
         }
 
-        public async Task<Response<IList<PackageDetails>>> GetAllPackagesAsync()
+        public async Task<Response<IList<PackageDetailsDto>>> GetAllPackagesAsync()
         {
-            return new Response<IList<PackageDetails>>(HttpStatusCode.OK, (await packageRepository.GetAllAsync()).ToList(), ResponseCode.Data);
+            var result = (await packageRepository.GetAllAsync()).ToList().Select(p => p.MapToDto()).ToList();
+            return new Response<IList<PackageDetailsDto>>(HttpStatusCode.OK, result, ResponseCode.Data);
         }
     }
 }
