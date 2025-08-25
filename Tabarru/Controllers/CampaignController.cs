@@ -36,7 +36,7 @@ namespace Tabarru.Controllers
         }
 
         [HttpPut("/status")]
-        public async Task<IActionResult> UpdateStatus([FromBody] CampaignUpdateStatusRequest dto)
+        public async Task<Response<CampaignReadDto>> UpdateStatus([FromBody] CampaignUpdateStatusRequest dto)
         {
             return await campaignService.UpdateStatusAsync(dto.MapToDto(TokenClaimHelper.GetId(User)));
         }

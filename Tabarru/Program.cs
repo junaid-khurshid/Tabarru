@@ -34,6 +34,7 @@ namespace Tabarru
             builder.Services.AddScoped<ICampaignService, CampaignService>();
             builder.Services.AddScoped<IPackageService, PackageService>();
             builder.Services.AddScoped<ITemplateService, TemplateService>();
+            builder.Services.AddScoped<IDeviceService, DeviceService>();
 
             //Repository
             builder.Services.AddTransient<ICharityRepository, CharityRepository>();
@@ -42,6 +43,7 @@ namespace Tabarru
             builder.Services.AddScoped<IPackageRepository, PackageRepository>();
             builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
             builder.Services.AddScoped<ITemplateCampaignRepository, TemplateCampaignRepository>();
+            builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
              .AddJwtBearer(options =>
