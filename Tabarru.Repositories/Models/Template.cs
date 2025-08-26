@@ -6,7 +6,6 @@ namespace Tabarru.Repositories.Models
     public class Template : EntityMetaData
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
 
         [ForeignKey(nameof(Charity))]
@@ -15,6 +14,16 @@ namespace Tabarru.Repositories.Models
         [Required, MaxLength(150)]
         public string Name { get; set; } = null!;
 
-        public ICollection<TemplateCampaign> TemplateCampaigns { get; set; } = new List<TemplateCampaign>();
+        [Required]
+        public string Icon { get; set; }
+        public string Message { get; set; }
+
+        [Required]
+        public string CampaignId { get; set; }
+        public Campaign Campaign { get; set; }
+
+        public ICollection<Mode> Modes { get; set; } = new List<Mode>();
+
+        //public ICollection<TemplateCampaign> TemplateCampaigns { get; set; } = new List<TemplateCampaign>();
     }
 }

@@ -9,5 +9,6 @@ namespace Tabarru.Repositories.IRepository
         Task<bool> AddAsync(Template template);
         Task<bool> UpdateAsync(Template template);
         Task<bool> DeleteAsync(Template template);
+        Task<bool> ExistsWithCampaignAsync(string campaignId);
     }
 }

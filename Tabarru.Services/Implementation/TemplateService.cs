@@ -29,17 +29,10 @@ namespace Tabarru.Services.Implementation
             var templates = await templateRepository.GetAllTemplatesByCharityIdAsync(CharityId);
             if (templates == null)
             {
-                return new Response<IEnumerable<TemplateReadDto>>(HttpStatusCode.OK, new List<TemplateReadDto>(), ResponseCode.Data);
+                return new Response<IEnumerable<TemplateReadDto>>(HttpStatusCode.NotFound, "Template Details not found.");
             }
 
-            var res = templates.Select(t => new TemplateReadDto
-            {
-                Id = t.Id,
-                Name = t.Name,
-                Campaigns = t.TemplateCampaigns?.Select(tc => tc.Campaign.Name).ToList()
-            });
-
-            return new Response<IEnumerable<TemplateReadDto>>(HttpStatusCode.OK, res, ResponseCode.Data);
+            return new Response<IEnumerable<TemplateReadDto>>(HttpStatusCode.OK, templates.Select(x => x.MapToDto()).ToList(), ResponseCode.Data);
         }
 
         public async Task<Response<TemplateReadDto>> GetTemplateByIdAsync(string id)
@@ -47,75 +40,93 @@ namespace Tabarru.Services.Implementation
             var template = await templateRepository.GetByIdAsync(id);
             if (template == null)
             {
-                return new Response<TemplateReadDto>(HttpStatusCode.OK, new TemplateReadDto(), ResponseCode.Data);
+                return new Response<TemplateReadDto>(HttpStatusCode.NotFound, "Template Details not found.");
             }
 
-            var res = new TemplateReadDto
-            {
-                Id = template.Id,
-                Name = template.Name,
-                Campaigns = template.TemplateCampaigns?.Select(tc => tc.Campaign.Name).ToList()
-            };
-
-            return new Response<TemplateReadDto>(HttpStatusCode.OK, res, ResponseCode.Data);
+            return new Response<TemplateReadDto>(HttpStatusCode.OK, template.MapToDto(), ResponseCode.Data);
         }
 
         public async Task<Response> CreateTemplateAsync(TemplateDto request)
         {
+
+            if (await templateRepository.ExistsWithCampaignAsync(request.CampaignId))
+            {
+                return new Response(HttpStatusCode.BadRequest, "Campaign already used in another template or mode.");
+            }
+
             var template = new Template
             {
                 Id = Guid.NewGuid().ToString(),
                 CharityId = request.CharityId,
                 Name = request.Name,
+                Icon = request.Icon,
+                Message = request.Message,
+                CampaignId = request.CampaignId,
             };
 
-            // Associate campaigns
-            foreach (var campaignId in request.CampaignIds)
+            foreach (var mode in request.Modes)
             {
-                if (await campaignRepository.AnyByIdAsync(campaignId))
+                if (await templateRepository.ExistsWithCampaignAsync(mode.CampaignId))
                 {
-                    template.TemplateCampaigns.Add(new TemplateCampaign
+                    return new Response(HttpStatusCode.BadRequest, "Campaign already used in another template or mode.");
+                }
+                else
+                {
+                    template.Modes.Add(new Mode
                     {
+                        ModeType = mode.ModeType,
+                        Amount = mode.Amount,
+                        CampaignId = mode.CampaignId,
                         TemplateId = template.Id,
-                        CampaignId = campaignId
                     });
                 }
             }
 
-            await templateRepository.AddAsync(template);
+            if (await templateRepository.AddAsync(template))
+            {
+                return new Response(HttpStatusCode.Created, "Template Created");
+            }
 
-            return new Response(HttpStatusCode.Created, "Template Created");
+            return new Response(HttpStatusCode.BadRequest, "Template Creation Failed.");
         }
 
         public async Task<Response> UpdateTemplateAsync(TemplateUpdateDto request)
         {
             var template = await templateRepository.GetByIdAsync(request.TemplateId);
-            if (template == null) return new Response(HttpStatusCode.BadRequest, "Template Details not found.");
+            if (template == null)
+                return new Response(HttpStatusCode.NotFound, "Template Details not found.");
 
-            template.Name = request.Name;
-
-            // Clear old associations
-            if (await templateCampaignRepository.RemoveTemplateCampaignsRanges(template.TemplateCampaigns))
+            if (await templateRepository.ExistsWithCampaignAsync(request.CampaignId) && request.CampaignId != template.CampaignId)
             {
-                return new Response(HttpStatusCode.BadRequest, "Template Updating Failed.");
+                return new Response(HttpStatusCode.BadRequest, "Campaign already used in another template or mode.");
             }
 
-            // Add new associations
-            foreach (var campaignId in request.CampaignIds)
+            foreach (var mode in request.Modes)
             {
-                if (await campaignRepository.AnyByIdAsync(campaignId))
+                if (await templateRepository.ExistsWithCampaignAsync(mode.CampaignId) &&
+                    !template.Modes.Any(m => m.CampaignId == mode.CampaignId))
+                    return new Response(HttpStatusCode.BadRequest, "Mode campaign already used");
+            }
+
+            template.Name = request.Name;
+            template.CharityId = request.CharityId;
+            template.CampaignId = request.CampaignId;
+
+            template.Modes.Clear();
+            foreach (var modeDto in request.Modes)
+            {
+                template.Modes.Add(new Mode
                 {
-                    template.TemplateCampaigns.Add(new TemplateCampaign
-                    {
-                        TemplateId = template.Id,
-                        CampaignId = campaignId
-                    });
-                }
+                    ModeType = modeDto.ModeType,
+                    CampaignId = modeDto.CampaignId,
+                    Amount = modeDto.Amount,
+                    TemplateId = template.Id
+                });
             }
 
             if (await templateRepository.UpdateAsync(template))
             {
-                return new Response(HttpStatusCode.OK, "Updated Template Successfully");
+                return new Response(HttpStatusCode.OK, "Template Updated Successfully");
             }
 
             return new Response(HttpStatusCode.BadRequest, "Template Updating Failed.");

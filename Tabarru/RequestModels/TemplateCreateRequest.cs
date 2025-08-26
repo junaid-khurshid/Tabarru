@@ -5,7 +5,10 @@ namespace Tabarru.RequestModels
     public class TemplateCreateRequest
     {
         public string Name { get; set; }
-        public List<string> CampaignIds { get; set; } = new();
+        public string Icon { get; set; }
+        public string Message { get; set; }
+        public string CampaignId { get; set; }
+        public List<ModeCreateRequest> Modes { get; set; } = new();
     }
 
     static class TemplateExtension
@@ -16,7 +19,10 @@ namespace Tabarru.RequestModels
             {
                 Name = request.Name,
                 CharityId = CharityId,
-                CampaignIds = request.CampaignIds
+                CampaignId = request.CampaignId,
+                Modes = request.Modes.Select(x => x.MapToDto()).ToList(),
+                Icon = request.Icon,
+                Message = request.Message
             };
         }
     }

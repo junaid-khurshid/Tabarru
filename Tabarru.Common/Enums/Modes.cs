@@ -4,7 +4,7 @@
     {
         Default = 0,
         Repeating = 1,
-        QuickMode = 2,
+        Quick = 2,
 
     }
 }

@@ -20,12 +20,6 @@ namespace Tabarru.Repositories.DatabaseContext
             builder.Entity<TemplateCampaign>()
                 .HasKey(tc => new { tc.TemplateId, tc.CampaignId });
 
-            // Relationships
-            builder.Entity<TemplateCampaign>()
-                .HasOne(tc => tc.Template)
-                .WithMany(t => t.TemplateCampaigns)
-                .HasForeignKey(tc => tc.TemplateId);
-
             builder.Entity<PackageDetails>()
                 .Property(p => p.Id)
                 .ValueGeneratedNever();
@@ -33,6 +27,10 @@ namespace Tabarru.Repositories.DatabaseContext
             builder.Entity<PackageDetails>()
                 .Property(p => p.FeaturesJson)
                 .HasDefaultValue("[]"); // Default empty array
+
+            builder.Entity<Template>()
+                .Property(p => p.Id)
+                .ValueGeneratedNever();
         }
 
         public DbSet<Charity> Charity { get; set; }
@@ -41,7 +39,8 @@ namespace Tabarru.Repositories.DatabaseContext
         public DbSet<PackageDetails> PackageDetails { get; set; }
         public DbSet<Template> Templates { get; set; }
         public DbSet<TemplateCampaign> TemplateCampaigns { get; set; }
-        public DbSet<Device> Devices {  get; set; }
+        public DbSet<Device> Devices { get; set; }
+        public DbSet<Mode> Modes { get; set; }
 
 
         public override int SaveChanges()

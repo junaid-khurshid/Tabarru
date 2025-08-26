@@ -31,9 +31,9 @@ namespace Tabarru.Controllers
         }
 
         [HttpPost]
-        public async Task<Response> Create([FromBody] TemplateDto request)
+        public async Task<Response> Create([FromBody] TemplateCreateRequest request)
         {
-            return await templateService.CreateTemplateAsync(request);
+            return await templateService.CreateTemplateAsync(request.MapToDto(TokenClaimHelper.GetId(User)));
         }
 
         [HttpPut]
