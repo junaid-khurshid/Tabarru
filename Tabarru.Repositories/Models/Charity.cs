@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Tabarru.Common.Enums;
 
 namespace Tabarru.Repositories.Models
 {
@@ -19,7 +20,7 @@ namespace Tabarru.Repositories.Models
         [MaxLength(100)]
         public string Role { get; set; }
 
-        public bool KycStatus { get; set; }
+        public CharityKycStatus KycStatus { get; set; }
         public bool EmailVerified { get; set; }
         public bool IsKycVerified { get; set; }
         public bool IsPackageVerified { get; set; }
@@ -27,6 +28,8 @@ namespace Tabarru.Repositories.Models
 
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
+
+        public virtual ICollection<CharityKycDetails> CharityKycDetails { get; set; }
 
         //Add-Migration Initial""
         //Update-Database

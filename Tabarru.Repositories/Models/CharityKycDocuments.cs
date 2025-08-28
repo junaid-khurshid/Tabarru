@@ -9,19 +9,19 @@ namespace Tabarru.Repositories.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
 
+        [ForeignKey(nameof(CharityKycDetails))]
+        public string CharityKycDetailsId { get; set; }
+
         [Required]
         public string Logo { get; set; }
 
         [Required]
+        public string IncorporationCertificate { get; set; }
+
         public string UtilityBill { get; set; }
 
-        [Required]
         public string TaxExemptionCertificate { get; set; }
 
-        //public string TaxExemptionCertificate { get; set; }
-
-        [Required]
         public string BankStatement { get; set; }
-
     }
 }
