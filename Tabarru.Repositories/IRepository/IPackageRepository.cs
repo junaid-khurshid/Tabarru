@@ -7,5 +7,7 @@ namespace Tabarru.Repositories.IRepository
         Task<bool> AddAsync(PackageDetails accountFeeDetail);
 
         Task<IEnumerable<PackageDetails>> GetAllAsync();
+
+        Task<PackageDetails> GetPackageByIdAsync(int packageId);
     }
 }

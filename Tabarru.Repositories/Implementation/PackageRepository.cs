@@ -24,5 +24,10 @@ namespace Tabarru.Repositories.Implementation
         {
             return await dbStorageContext.PackageDetails.ToListAsync();
         }
+
+        public async Task<PackageDetails> GetPackageByIdAsync(int packageId)
+        {
+            return await dbStorageContext.PackageDetails.FirstOrDefaultAsync(p => p.Id == packageId);
+        }
     }
 }

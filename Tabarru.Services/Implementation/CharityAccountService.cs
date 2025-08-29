@@ -16,18 +16,21 @@ namespace Tabarru.Services.Implementation
     {
         private readonly ICharityRepository charityRepository;
         private readonly IEmailVerificationRepository emailVerificationRepository;
+        private readonly IPackageRepository packageRepository;
         private readonly IEmailMessageService emailMessageService;
         private readonly DbContext dbContext;
         private readonly IConfiguration configuration;
 
         public CharityAccountService(ICharityRepository charityRepository,
             IEmailVerificationRepository emailVerificationRepository,
+            IPackageRepository packageRepository,
             IEmailMessageService emailMessageService,
             DbStorageContext dbContext,
             IConfiguration configuration)
         {
             this.charityRepository = charityRepository;
             this.emailVerificationRepository = emailVerificationRepository;
+            this.packageRepository = packageRepository;
             this.emailMessageService = emailMessageService;
             this.dbContext = dbContext;
             this.configuration = configuration;
@@ -102,7 +105,7 @@ namespace Tabarru.Services.Implementation
                     var charity = new Charity
                     {
                         Email = dto.Email,
-                        KycStatus = false,
+                        KycStatus = CharityKycStatus.Pending,
                         PasswordHash = hashSalt.Item2,
                         Salt = hashSalt.Item1,
                         Role = dto.Role.ToUpper(),
@@ -162,7 +165,6 @@ namespace Tabarru.Services.Implementation
             }
         }
 
-
         public async Task<Response> ReGenerateEmailVerificationTokenByEmail(string email)
         {
             var verificationDetails = await this.emailVerificationRepository.GetByEmailAsync(email);
@@ -212,6 +214,27 @@ namespace Tabarru.Services.Implementation
             }
 
             return new Response(HttpStatusCode.Accepted, "Email verified successfully.");
+        }
+
+        public async Task<Response> AssignPackageAsync(CharityPackageUpdateDto dto)
+        {
+            var charity = await charityRepository.GetByIdAsync(dto.CharityId);
+            if (charity == null)
+                return new Response(HttpStatusCode.NotFound, "Charity not found");
+
+            if (!charity.IsKycVerified)
+                return new Response(HttpStatusCode.BadRequest, "KYC not verified. Cannot assign package.");
+
+            var package = await packageRepository.GetPackageByIdAsync(dto.PackageId);
+            if (package == null)
+                return new Response(HttpStatusCode.NotFound, "Package not found");
+
+            charity.PackageId = package.Id.ToString();
+            charity.IsPackageVerified = true;
+
+            await charityRepository.UpdateAsync(charity);
+
+            return new Response(HttpStatusCode.OK, $"Package '{package.Name}' assigned successfully");
         }
 
         //public async Task<Response<LoginResponse>> GenerateRefreshToken(string token)

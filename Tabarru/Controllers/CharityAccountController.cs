@@ -4,6 +4,7 @@ using Tabarru.Common.Helper;
 using Tabarru.Common.Models;
 using Tabarru.RequestModels;
 using Tabarru.Services.IServices;
+using Tabarru.Services.Models;
 
 namespace Tabarru.Controllers
 {
@@ -19,13 +20,13 @@ namespace Tabarru.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<Response> Register(RegisterCharityRequest registerCharityDetail)
+        public async Task<Response> Register([FromBody] RegisterCharityRequest registerCharityDetail)
         {
-           return await this.charityAccountService.Register(registerCharityDetail.MapToDto());
+            return await this.charityAccountService.Register(registerCharityDetail.MapToDto());
         }
 
         [HttpPost("login")]
-        public async Task<Response<LoginResponse>> LoginAsync(LoginRequest loginRequest)
+        public async Task<Response<LoginResponse>> LoginAsync([FromBody] LoginRequest loginRequest)
         {
             return await this.charityAccountService.Login(loginRequest.MapToDto());
         }
@@ -40,6 +41,12 @@ namespace Tabarru.Controllers
         public async Task<IActionResult> VerifyToken([FromBody] VerifyRequest request)
         {
             return await this.charityAccountService.VerifyToken(request.MapToDto());
+        }
+
+        [HttpPut("assignPackage")]
+        public async Task<Response> AssignPackage([FromBody] CharityPackageUpdateRequest charityPackageUpdateRequest)
+        {
+            return await charityAccountService.AssignPackageAsync(charityPackageUpdateRequest.MaptoDto(TokenClaimHelper.GetId(User)));
         }
         /// <summary>
         ///  for testing purpose

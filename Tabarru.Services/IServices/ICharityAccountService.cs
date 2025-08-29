@@ -10,5 +10,6 @@ namespace Tabarru.Services.IServices
         Task<Response<LoginResponse>> Login(LoginDto dto);
         Task<Response> ReGenerateEmailVerificationTokenByEmail(string email);
         Task<Response> VerifyToken(VerifyRequestDto request);
+        Task<Response> AssignPackageAsync(CharityPackageUpdateDto dto);
     }
 }
