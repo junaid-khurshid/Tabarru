@@ -1,4 +1,5 @@
-﻿using Tabarru.Repositories.Models;
+﻿using Tabarru.Common.Enums;
+using Tabarru.Repositories.Models;
 
 namespace Tabarru.Repositories.IRepository
 {
@@ -9,5 +10,6 @@ namespace Tabarru.Repositories.IRepository
         Task<IEnumerable<Charity>> GetAllCharitiesAsync();
         Task<bool> AddAsync(CharityKycDetails details);
         Task<bool> UpdateAsync(CharityKycDetails charityKycDetails);
+        Task<CharityKycStatus> GetCharityKycStatus(string CharityId);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Tabarru.Common.Enums;
 using Tabarru.Repositories.DatabaseContext;
 using Tabarru.Repositories.IRepository;
 using Tabarru.Repositories.Models;
@@ -46,6 +47,11 @@ namespace Tabarru.Repositories.Implementation
         {
             dbStorageContext.CharityKycDetails.Update(charityKycDetails);
             return await dbStorageContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<CharityKycStatus> GetCharityKycStatus(string CharityId)
+        {
+            return await dbStorageContext.Charity.Where(x => x.Id.Equals(CharityId)).Select(x => x.KycStatus).FirstOrDefaultAsync();
         }
     }
 }

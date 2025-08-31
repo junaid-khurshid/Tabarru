@@ -1,9 +1,11 @@
 ﻿
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
+using Tabarru.Attributes;
 using Tabarru.Repositories.DatabaseContext;
 using Tabarru.Repositories.Implementation;
 using Tabarru.Repositories.IRepository;
@@ -47,6 +49,12 @@ namespace Tabarru
             builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
             builder.Services.AddScoped<ICharityKycRepository, CharityKycRepository>();
 
+            // Register IHttpContextAccessor(needed in your policy)
+            builder.Services.AddHttpContextAccessor();
+
+            // Register custom authorization handler
+            builder.Services.AddSingleton<IAuthorizationHandler, ValidateKycStatusPolicy>();
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
              .AddJwtBearer(options =>
              {
@@ -62,7 +70,12 @@ namespace Tabarru
                      IssuerSigningKey = new SymmetricSecurityKey(key)
                  };
              });
-            builder.Services.AddAuthorization();
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("KycApprovedOnly", policy =>
+                    policy.Requirements.Add(new ValidateKycStatusPolicy()));
+            });
 
             // Add Swagger services
             builder.Services.AddEndpointsApiExplorer();
@@ -84,7 +97,6 @@ namespace Tabarru
 
             app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 

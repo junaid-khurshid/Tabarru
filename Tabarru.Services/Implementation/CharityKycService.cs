@@ -90,5 +90,10 @@ namespace Tabarru.Services.Implementation
 
             return new Response<IList<Charity>>(HttpStatusCode.OK, charities.ToList(), ResponseCode.Data);
         }
+
+        public Task<CharityKycStatus> GetCharityKycStatus(string CharityId)
+        {
+            return charityKycRepository.GetCharityKycStatus(CharityId);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Tabarru.Common.Models;
+﻿using Tabarru.Common.Enums;
+using Tabarru.Common.Models;
 using Tabarru.Repositories.Models;
 using Tabarru.Services.Models;
 
@@ -9,5 +10,6 @@ namespace Tabarru.Services.IServices
         Task<Response> SubmitKycAsync(string charityId, CharityKycDto dto);
         Task<Response> UpdateKycStatusAsync(AdminKycUpdateDto dto);
         Task<Response<IList<Charity>>> GetAllCharitiesForAdminAsync();
+        Task<CharityKycStatus> GetCharityKycStatus(string CharityId);
     }
 }
