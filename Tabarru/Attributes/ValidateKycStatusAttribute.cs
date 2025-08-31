@@ -16,11 +16,13 @@ namespace Tabarru.Attributes
                 ICharityKycService kycService = (ICharityKycService)authContext.HttpContext.RequestServices.GetService(typeof(ICharityKycService));
                 var httpContextAccessor = (IHttpContextAccessor)authContext.HttpContext.RequestServices.GetService(typeof(IHttpContextAccessor));
 
-                System.Security.Claims.ClaimsPrincipal user = httpContextAccessor.HttpContext.User;
+                var httpContext = (validationContext.Resource as AuthorizationFilterContext)?.HttpContext;
+                var claims = httpContext.User;
+                var CharityId = TokenClaimHelper.GetId(claims);
 
-                var status = TaskHelper.RunSync(() => kycService.GetCharityKycStatus(user.Id()));
+                var status = TaskHelper.RunSync(() => kycService.GetCharityKycStatus(CharityId));
 
-                if (status.Status == CharityKycStatus.Approved)
+                if (status == CharityKycStatus.Approved)
                     //return ValidationResult.Success;
                     validationContext.Succeed(validateKycUserStatusPolicy);
                 else
