@@ -12,15 +12,12 @@ namespace Tabarru.Services.Implementation
     {
         private readonly ITemplateRepository templateRepository;
         private readonly ICampaignRepository campaignRepository;
-        private readonly ITemplateCampaignRepository templateCampaignRepository;
 
         public TemplateService(ITemplateRepository templateRepository,
-            ICampaignRepository campaignRepository,
-            ITemplateCampaignRepository templateCampaignRepository)
+            ICampaignRepository campaignRepository)
         {
             this.templateRepository = templateRepository;
             this.campaignRepository = campaignRepository;
-            this.templateCampaignRepository = templateCampaignRepository;
         }
 
 

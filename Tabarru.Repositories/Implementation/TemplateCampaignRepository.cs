@@ -4,7 +4,7 @@ using Tabarru.Repositories.Models;
 
 namespace Tabarru.Repositories.Implementation
 {
-    public class TemplateCampaignRepository : ITemplateCampaignRepository
+    public class TemplateCampaignRepository 
     {
         private readonly DbStorageContext dbStorageContext;
 
@@ -13,10 +13,10 @@ namespace Tabarru.Repositories.Implementation
             this.dbStorageContext = dbStorageContext;
         }
 
-        public async Task<bool> RemoveTemplateCampaignsRanges(ICollection<TemplateCampaign> templateCampaigns)
-        {
-            dbStorageContext.TemplateCampaigns.RemoveRange(templateCampaigns);
-            return await dbStorageContext.SaveChangesAsync() > 0;
-        }
+        //public async Task<bool> RemoveTemplateCampaignsRanges(ICollection<TemplateCampaign> templateCampaigns)
+        //{
+        //    dbStorageContext.TemplateCampaigns.RemoveRange(templateCampaigns);
+        //    return await dbStorageContext.SaveChangesAsync() > 0;
+        //}
     }
 }

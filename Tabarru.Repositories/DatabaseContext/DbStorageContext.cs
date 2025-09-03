@@ -17,8 +17,8 @@ namespace Tabarru.Repositories.DatabaseContext
             base.OnModelCreating(builder);
 
             // Composite key for join table
-            builder.Entity<TemplateCampaign>()
-                .HasKey(tc => new { tc.TemplateId, tc.CampaignId });
+            //builder.Entity<TemplateCampaign>()
+            //    .HasKey(tc => new { tc.TemplateId, tc.CampaignId });
 
             builder.Entity<PackageDetails>()
                 .Property(p => p.Id)
@@ -31,6 +31,27 @@ namespace Tabarru.Repositories.DatabaseContext
             builder.Entity<Template>()
                 .Property(p => p.Id)
                 .ValueGeneratedNever();
+
+            // Template → Campaign (Cascade OK) /// will remove this after removing the CampaingID from template
+            builder.Entity<Template>()
+                .HasOne(t => t.Campaign)
+                .WithMany()
+                .HasForeignKey(t => t.CampaignId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Mode → Template (Cascade OK) /// will remove this after removing the CampaingID from template
+            builder.Entity<Mode>()
+                .HasOne(m => m.Template)
+                .WithMany(t => t.Modes)
+                .HasForeignKey(m => m.TemplateId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Mode → Campaign (Restrict 🚫 prevent cascade loop) /// will remove this after removing the CampaingID from template
+            builder.Entity<Mode>()
+                .HasOne(m => m.Campaign)
+                .WithMany()
+                .HasForeignKey(m => m.CampaignId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         public DbSet<Charity> Charity { get; set; }
@@ -40,7 +61,7 @@ namespace Tabarru.Repositories.DatabaseContext
         public DbSet<Campaign> Campaigns { get; set; }
         public DbSet<PackageDetails> PackageDetails { get; set; }
         public DbSet<Template> Templates { get; set; }
-        public DbSet<TemplateCampaign> TemplateCampaigns { get; set; }
+        //public DbSet<TemplateCampaign> TemplateCampaigns { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<Mode> Modes { get; set; }
 

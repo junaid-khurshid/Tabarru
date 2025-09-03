@@ -45,7 +45,7 @@ namespace Tabarru
             builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
             builder.Services.AddScoped<IPackageRepository, PackageRepository>();
             builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
-            builder.Services.AddScoped<ITemplateCampaignRepository, TemplateCampaignRepository>();
+            //builder.Services.AddScoped<ITemplateCampaignRepository, TemplateCampaignRepository>();
             builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
             builder.Services.AddScoped<ICharityKycRepository, CharityKycRepository>();
 
