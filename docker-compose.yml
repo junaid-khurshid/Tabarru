@@ -9,9 +9,10 @@ services:
       - "1433:1433"
     healthcheck:
       test: ["CMD-SHELL", "sqlcmd -S localhost -U sa -P Password@12345 -Q 'SELECT 1' || exit 1"]
-      interval: 10s
+      interval: 10s        # check every 10s
       timeout: 5s
-      retries: 5
+      retries: 6           # 6 retries = up to 60s wait
+      start_period: 30s    # wait 30s before starting healthcheck
 
   api:
     build:
@@ -24,4 +25,5 @@ services:
       db:
         condition: service_healthy
     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=db;Database=TabarruDb;User Id=sa;Password=Password@12345;TrustServerCertificate=True;

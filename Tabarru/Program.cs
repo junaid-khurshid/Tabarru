@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -23,15 +22,13 @@ namespace Tabarru
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
             builder.Services.AddDbContext<DbStorageContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            //Services
+            // Services
             builder.Services.AddTransient<ICharityAccountService, CharityAccountService>();
             builder.Services.AddTransient<IEmailMessageService, EmailMessageService>();
             builder.Services.AddScoped<ICampaignService, CampaignService>();
@@ -40,37 +37,33 @@ namespace Tabarru
             builder.Services.AddScoped<IDeviceService, DeviceService>();
             builder.Services.AddScoped<ICharityKycService, CharityKycService>();
 
-            //Repository
+            // Repository
             builder.Services.AddTransient<ICharityRepository, CharityRepository>();
             builder.Services.AddTransient<IEmailVerificationRepository, EmailVerificationRepository>();
             builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
             builder.Services.AddScoped<IPackageRepository, PackageRepository>();
             builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
-            //builder.Services.AddScoped<ITemplateCampaignRepository, TemplateCampaignRepository>();
             builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
             builder.Services.AddScoped<ICharityKycRepository, CharityKycRepository>();
 
-            // Register IHttpContextAccessor(needed in your policy)
             builder.Services.AddHttpContextAccessor();
-
-            // Register custom authorization handler
             builder.Services.AddSingleton<IAuthorizationHandler, ValidateKycStatusPolicy>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-             .AddJwtBearer(options =>
-             {
-                 var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
-                 options.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     ValidateIssuer = true,
-                     ValidateAudience = true,
-                     ValidateLifetime = true,
-                     ValidateIssuerSigningKey = true,
-                     ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                     ValidAudience = builder.Configuration["Jwt:Audience"],
-                     IssuerSigningKey = new SymmetricSecurityKey(key)
-                 };
-             });
+                .AddJwtBearer(options =>
+                {
+                    var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(key)
+                    };
+                });
 
             builder.Services.AddAuthorization(options =>
             {
@@ -78,10 +71,10 @@ namespace Tabarru
                     policy.Requirements.Add(new ValidateKycStatusPolicy()));
             });
 
-            // Add Swagger services
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Allow Swagger to call API (CORS fix)
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
@@ -96,14 +89,17 @@ namespace Tabarru
 
             await InitializeDatabaseAsync(app.Services, app.Environment, app);
 
-
-            // Use CORS
+            // CORS must come before authentication
             app.UseCors("AllowAll");
 
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
-            app.UseHttpsRedirection();
+            // Comment out HTTPS redirect in Docker (causes "Failed to fetch")
+            // app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();
@@ -120,16 +116,14 @@ namespace Tabarru
                 var db = scope.ServiceProvider.GetRequiredService<DbStorageContext>();
                 var packageRepository = scope.ServiceProvider.GetRequiredService<IPackageRepository>();
 
-                while (true) // keep retrying until success
+                while (true)
                 {
                     try
                     {
-                        // Check if database exists
                         if (await db.Database.CanConnectAsync())
                         {
                             Console.WriteLine("[DB Init] Database already exists ✅");
 
-                            //Check if a specific table exists (example: PackageDetails)
                             var tableExists = await db.Database.ExecuteSqlRawAsync(
                                 @"IF OBJECT_ID(N'[dbo].[PackageDetails]', N'U') IS NOT NULL SELECT 1 ELSE SELECT 0"
                             );
@@ -141,7 +135,7 @@ namespace Tabarru
                             else
                             {
                                 Console.WriteLine("[DB Init] Tables not found — creating...");
-                                await db.Database.EnsureCreatedAsync(); // only creates schema
+                                await db.Database.EnsureCreatedAsync();
                             }
                         }
                         else
@@ -150,7 +144,6 @@ namespace Tabarru
                             await db.Database.EnsureCreatedAsync();
                         }
 
-                        // ---- Seed PackageDetails ----
                         if (!db.Set<PackageDetails>().Any())
                         {
                             var filePath = Path.Combine(env.ContentRootPath, "Defaults", "PackageDetails.json");
@@ -170,7 +163,7 @@ namespace Tabarru
                     catch (SqlException ex)
                     {
                         Console.WriteLine($"[DB Init] Waiting for SQL Server... Error: {ex.Message}");
-                        await Task.Delay(5000); // wait 5s before retrying
+                        await Task.Delay(5000);
                     }
                 }
             }
@@ -179,14 +172,11 @@ namespace Tabarru
         private static T GetDefaultValues<T>(string filePath)
         {
             var json = File.ReadAllText(filePath);
-
             var options = new JsonSerializerOptions
             {
-                PropertyNameCaseInsensitive = true // 👈 allows "features" → Features
+                PropertyNameCaseInsensitive = true
             };
-
             return System.Text.Json.JsonSerializer.Deserialize<T>(json, options)!;
         }
-
     }
 }
