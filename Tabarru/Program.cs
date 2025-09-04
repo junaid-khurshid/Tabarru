@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -81,17 +82,26 @@ namespace Tabarru
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             var app = builder.Build();
 
-            await InitializeDatabaseAsync(app.Services, app.Environment);
+            await InitializeDatabaseAsync(app.Services, app.Environment, app);
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-                app.MapOpenApi();
-            }
+
+            // Use CORS
+            app.UseCors("AllowAll");
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
 
@@ -103,23 +113,65 @@ namespace Tabarru
             app.Run();
         }
 
-        private static async Task InitializeDatabaseAsync(IServiceProvider serviceProvider, IHostEnvironment env)
+        private static async Task InitializeDatabaseAsync(IServiceProvider serviceProvider, IHostEnvironment env, WebApplication app)
         {
-            using var scope = serviceProvider.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<DbStorageContext>();
-
-            // Check if any PackageDetails exist
-            if (!context.Set<PackageDetails>().Any())
+            using (var scope = app.Services.CreateScope())
             {
+                var db = scope.ServiceProvider.GetRequiredService<DbStorageContext>();
                 var packageRepository = scope.ServiceProvider.GetRequiredService<IPackageRepository>();
 
-                var packageDetailsList = GetDefaultValues<List<PackageDetails>>(
-                    Path.Combine(env.ContentRootPath, "Defaults", "PackageDetails.json")
-                );
-
-                foreach (var package in packageDetailsList)
+                while (true) // keep retrying until success
                 {
-                    await packageRepository.AddAsync(package);
+                    try
+                    {
+                        // Check if database exists
+                        if (await db.Database.CanConnectAsync())
+                        {
+                            Console.WriteLine("[DB Init] Database already exists ✅");
+
+                            //Check if a specific table exists (example: PackageDetails)
+                            var tableExists = await db.Database.ExecuteSqlRawAsync(
+                                @"IF OBJECT_ID(N'[dbo].[PackageDetails]', N'U') IS NOT NULL SELECT 1 ELSE SELECT 0"
+                            );
+
+                            if (tableExists == 1)
+                            {
+                                Console.WriteLine("[DB Init] Tables already exist ✅");
+                            }
+                            else
+                            {
+                                Console.WriteLine("[DB Init] Tables not found — creating...");
+                                await db.Database.EnsureCreatedAsync(); // only creates schema
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("[DB Init] Database not found — creating...");
+                            await db.Database.EnsureCreatedAsync();
+                        }
+
+                        // ---- Seed PackageDetails ----
+                        if (!db.Set<PackageDetails>().Any())
+                        {
+                            var filePath = Path.Combine(env.ContentRootPath, "Defaults", "PackageDetails.json");
+                            if (File.Exists(filePath))
+                            {
+                                var packageDetailsList = GetDefaultValues<List<PackageDetails>>(filePath);
+
+                                foreach (var package in packageDetailsList!)
+                                {
+                                    await packageRepository.AddAsync(package);
+                                }
+                            }
+                        }
+
+                        break;
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine($"[DB Init] Waiting for SQL Server... Error: {ex.Message}");
+                        await Task.Delay(5000); // wait 5s before retrying
+                    }
                 }
             }
         }
