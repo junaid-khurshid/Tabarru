@@ -71,7 +71,7 @@ namespace Tabarru.Services.Implementation
             var campaign = await campaignRepository.GetByIdAsync(id);
             if (campaign == null)
             {
-                return new Response<CampaignReadDto>(HttpStatusCode.BadRequest, "Campaign Details not found");
+                return new Response<CampaignReadDto>(HttpStatusCode.BadRequest, $"Campaign with {id} not found");
             }
 
             return new Response<CampaignReadDto>(HttpStatusCode.OK, campaign.MapToDto(), ResponseCode.Data);

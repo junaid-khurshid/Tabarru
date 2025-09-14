@@ -45,6 +45,10 @@ namespace Tabarru.Services.Implementation
 
         public async Task<Response> CreateTemplateAsync(TemplateDto request)
         {
+            if (await campaignRepository.GetByIdAsync(request.CampaignId) == null)
+            {
+                return new Response(HttpStatusCode.BadRequest, $"Campaign with {request.CampaignId} not found");
+            }
 
             if (await templateRepository.ExistsWithCampaignAsync(request.CampaignId))
             {
@@ -63,6 +67,12 @@ namespace Tabarru.Services.Implementation
 
             foreach (var mode in request.Modes)
             {
+
+                if (await campaignRepository.GetByIdAsync(mode.CampaignId) == null)
+                {
+                    return new Response(HttpStatusCode.BadRequest, $"Campaign with {mode.CampaignId} not found");
+                }
+
                 if (await templateRepository.ExistsWithCampaignAsync(mode.CampaignId))
                 {
                     return new Response(HttpStatusCode.BadRequest, "Campaign already used in another template or mode.");
