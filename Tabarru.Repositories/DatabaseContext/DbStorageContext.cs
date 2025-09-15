@@ -64,7 +64,9 @@ namespace Tabarru.Repositories.DatabaseContext
         //public DbSet<TemplateCampaign> TemplateCampaigns { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<Mode> Modes { get; set; }
-
+        public DbSet<PaymentDetail> PaymentDetails { get; set; } 
+        public DbSet<GiftAidDetail> GiftAidDetails { get; set; }
+        public DbSet<RecurringPaymentDetail> RecurringPaymentDetails { get; set; }
 
         public override int SaveChanges()
         {
