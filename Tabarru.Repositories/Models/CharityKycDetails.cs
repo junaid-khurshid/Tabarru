@@ -39,11 +39,6 @@ namespace Tabarru.Repositories.Models
         [MaxLength(200)]
         public string CharityNumber { get; set; }
 
-
-        [ForeignKey(nameof(CharityKycDocuments))]
-        public string CharityKycDocumentsId { get; set; }
-
-
         public virtual CharityKycDocuments CharityKycDocuments { get; set; }
     }
 }

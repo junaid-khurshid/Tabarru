@@ -1,4 +1,6 @@
-﻿namespace Tabarru.Services.Models
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Tabarru.Services.Models
 {
     public class CharityKycDto
     {
@@ -9,10 +11,10 @@
         public string CharityNumber { get; set; }
 
         // Documents
-        public string Logo { get; set; }
-        public string IncorporationCertificate { get; set; }
-        public string? UtilityBill { get; set; }
-        public string? TaxExemptionCertificate { get; set; }
-        public string? BankStatement { get; set; }
+        public IFormFile Logo { get; set; }
+        public IFormFile IncorporationCertificate { get; set; }
+        public IFormFile? UtilityBill { get; set; }
+        public IFormFile? TaxExemptionCertificate { get; set; }
+        public IFormFile? BankStatement { get; set; }
     }
 }

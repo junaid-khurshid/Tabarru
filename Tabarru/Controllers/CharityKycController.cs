@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Tabarru.Common.Helper;
 using Tabarru.Common.Models;
 using Tabarru.Repositories.Models;
+using Tabarru.RequestModels;
 using Tabarru.Services.IServices;
 using Tabarru.Services.Models;
 
@@ -8,6 +11,8 @@ namespace Tabarru.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "USER, ADMIN")]
+
     public class CharityKycController : ControllerBase
     {
         private readonly ICharityKycService _kycService;
@@ -17,11 +22,12 @@ namespace Tabarru.Controllers
             _kycService = kycService;
         }
 
-        [HttpPost("{charityId}/submit")]
-        public async Task<Response> SubmitKyc(string charityId, [FromBody] CharityKycDto dto)
+        [HttpPost("submit")]
+        public async Task<Response> SubmitKyc([FromForm] CharityKycSubmitRequest dto)
         {
-            return await _kycService.SubmitKycAsync(charityId, dto);
+            return await _kycService.SubmitKycAsync(TokenClaimHelper.GetId(User), dto.MapToDto());
         }
+
 
         [HttpGet("admin/all")]
         public async Task<Response<IList<Charity>>> GetAllCharities()

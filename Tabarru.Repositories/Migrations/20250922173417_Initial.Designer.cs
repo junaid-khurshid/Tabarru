@@ -12,8 +12,8 @@ using Tabarru.Repositories.DatabaseContext;
 namespace Tabarru.Repositories.Migrations
 {
     [DbContext(typeof(DbStorageContext))]
-    [Migration("20250902073654_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250922173417_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -132,10 +132,6 @@ namespace Tabarru.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CharityKycDocumentsId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("CharityName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -176,8 +172,6 @@ namespace Tabarru.Repositories.Migrations
 
                     b.HasIndex("CharityId");
 
-                    b.HasIndex("CharityKycDocumentsId");
-
                     b.ToTable("CharityKycDetails");
                 });
 
@@ -193,7 +187,7 @@ namespace Tabarru.Repositories.Migrations
 
                     b.Property<string>("CharityKycDetailsId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
@@ -218,6 +212,9 @@ namespace Tabarru.Repositories.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CharityKycDetailsId")
+                        .IsUnique();
 
                     b.ToTable("CharityKycDocuments");
                 });
@@ -292,6 +289,55 @@ namespace Tabarru.Repositories.Migrations
                     b.ToTable("EmailVerificationDetails");
                 });
 
+            modelBuilder.Entity("Tabarru.Repositories.Models.GiftAidDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentDetailId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Postcode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("UpdatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentDetailId");
+
+                    b.ToTable("GiftAidDetails");
+                });
+
             modelBuilder.Entity("Tabarru.Repositories.Models.Mode", b =>
                 {
                     b.Property<string>("Id")
@@ -360,6 +406,119 @@ namespace Tabarru.Repositories.Migrations
                     b.ToTable("PackageDetails");
                 });
 
+            modelBuilder.Entity("Tabarru.Repositories.Models.PaymentDetail", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<string>("AuthorizationCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CampaignId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsBankFeeCovered")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsGiftAid")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRecurringPayment")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("PaymentDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentMethodId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("UpdatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PaymentDetails");
+                });
+
+            modelBuilder.Entity("Tabarru.Repositories.Models.RecurringPaymentDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<string>("AuthorizationCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("NextRecurringDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentDetailId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PaymentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentMethodInfo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("UpdatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentDetailId");
+
+                    b.ToTable("RecurringPaymentDetails");
+                });
+
             modelBuilder.Entity("Tabarru.Repositories.Models.Template", b =>
                 {
                     b.Property<string>("Id")
@@ -406,14 +565,15 @@ namespace Tabarru.Repositories.Migrations
                         .HasForeignKey("CharityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.HasOne("Tabarru.Repositories.Models.CharityKycDocuments", "CharityKycDocuments")
-                        .WithMany()
-                        .HasForeignKey("CharityKycDocumentsId")
+            modelBuilder.Entity("Tabarru.Repositories.Models.CharityKycDocuments", b =>
+                {
+                    b.HasOne("Tabarru.Repositories.Models.CharityKycDetails", null)
+                        .WithOne("CharityKycDocuments")
+                        .HasForeignKey("Tabarru.Repositories.Models.CharityKycDocuments", "CharityKycDetailsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("CharityKycDocuments");
                 });
 
             modelBuilder.Entity("Tabarru.Repositories.Models.Device", b =>
@@ -425,6 +585,17 @@ namespace Tabarru.Repositories.Migrations
                         .IsRequired();
 
                     b.Navigation("Template");
+                });
+
+            modelBuilder.Entity("Tabarru.Repositories.Models.GiftAidDetail", b =>
+                {
+                    b.HasOne("Tabarru.Repositories.Models.PaymentDetail", "PaymentDetail")
+                        .WithMany()
+                        .HasForeignKey("PaymentDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PaymentDetail");
                 });
 
             modelBuilder.Entity("Tabarru.Repositories.Models.Mode", b =>
@@ -446,6 +617,17 @@ namespace Tabarru.Repositories.Migrations
                     b.Navigation("Template");
                 });
 
+            modelBuilder.Entity("Tabarru.Repositories.Models.RecurringPaymentDetail", b =>
+                {
+                    b.HasOne("Tabarru.Repositories.Models.PaymentDetail", "PaymentDetail")
+                        .WithMany()
+                        .HasForeignKey("PaymentDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PaymentDetail");
+                });
+
             modelBuilder.Entity("Tabarru.Repositories.Models.Template", b =>
                 {
                     b.HasOne("Tabarru.Repositories.Models.Campaign", "Campaign")
@@ -460,6 +642,12 @@ namespace Tabarru.Repositories.Migrations
             modelBuilder.Entity("Tabarru.Repositories.Models.Charity", b =>
                 {
                     b.Navigation("CharityKycDetails");
+                });
+
+            modelBuilder.Entity("Tabarru.Repositories.Models.CharityKycDetails", b =>
+                {
+                    b.Navigation("CharityKycDocuments")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Tabarru.Repositories.Models.Template", b =>

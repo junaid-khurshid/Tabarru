@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Tabarru.Repositories.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -55,25 +55,6 @@ namespace Tabarru.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CharityKycDocuments",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CharityKycDetailsId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IncorporationCertificate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UtilityBill = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TaxExemptionCertificate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BankStatement = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CharityKycDocuments", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "EmailVerificationDetails",
                 columns: table => new
                 {
@@ -106,6 +87,32 @@ namespace Tabarru.Repositories.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PackageDetails", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PaymentDetails",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CampaignId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CustomerId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AuthorizationCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentMethodId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsGiftAid = table.Column<bool>(type: "bit", nullable: false),
+                    IsBankFeeCovered = table.Column<bool>(type: "bit", nullable: false),
+                    IsRecurringPayment = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentDetails", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -145,7 +152,6 @@ namespace Tabarru.Repositories.Migrations
                     CharityName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CountryCode = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     CharityNumber = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    CharityKycDocumentsId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
@@ -153,15 +159,64 @@ namespace Tabarru.Repositories.Migrations
                 {
                     table.PrimaryKey("PK_CharityKycDetails", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CharityKycDetails_CharityKycDocuments_CharityKycDocumentsId",
-                        column: x => x.CharityKycDocumentsId,
-                        principalTable: "CharityKycDocuments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_CharityKycDetails_Charity_CharityId",
                         column: x => x.CharityId,
                         principalTable: "Charity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GiftAidDetails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PaymentDetailId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Postcode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GiftAidDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GiftAidDetails_PaymentDetails_PaymentDetailId",
+                        column: x => x.PaymentDetailId,
+                        principalTable: "PaymentDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RecurringPaymentDetails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PaymentDetailId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PaymentId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentMethodInfo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AuthorizationCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NextRecurringDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecurringPaymentDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RecurringPaymentDetails_PaymentDetails_PaymentDetailId",
+                        column: x => x.PaymentDetailId,
+                        principalTable: "PaymentDetails",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -218,20 +273,51 @@ namespace Tabarru.Repositories.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CharityKycDocuments",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CharityKycDetailsId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IncorporationCertificate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UtilityBill = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TaxExemptionCertificate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BankStatement = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CharityKycDocuments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CharityKycDocuments_CharityKycDetails_CharityKycDetailsId",
+                        column: x => x.CharityKycDetailsId,
+                        principalTable: "CharityKycDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_CharityKycDetails_CharityId",
                 table: "CharityKycDetails",
                 column: "CharityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CharityKycDetails_CharityKycDocumentsId",
-                table: "CharityKycDetails",
-                column: "CharityKycDocumentsId");
+                name: "IX_CharityKycDocuments_CharityKycDetailsId",
+                table: "CharityKycDocuments",
+                column: "CharityKycDetailsId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Devices_TemplateId",
                 table: "Devices",
                 column: "TemplateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GiftAidDetails_PaymentDetailId",
+                table: "GiftAidDetails",
+                column: "PaymentDetailId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Modes_CampaignId",
@@ -244,6 +330,11 @@ namespace Tabarru.Repositories.Migrations
                 column: "TemplateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RecurringPaymentDetails_PaymentDetailId",
+                table: "RecurringPaymentDetails",
+                column: "PaymentDetailId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Templates_CampaignId",
                 table: "Templates",
                 column: "CampaignId");
@@ -253,7 +344,7 @@ namespace Tabarru.Repositories.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CharityKycDetails");
+                name: "CharityKycDocuments");
 
             migrationBuilder.DropTable(
                 name: "Devices");
@@ -262,19 +353,28 @@ namespace Tabarru.Repositories.Migrations
                 name: "EmailVerificationDetails");
 
             migrationBuilder.DropTable(
+                name: "GiftAidDetails");
+
+            migrationBuilder.DropTable(
                 name: "Modes");
 
             migrationBuilder.DropTable(
                 name: "PackageDetails");
 
             migrationBuilder.DropTable(
-                name: "CharityKycDocuments");
+                name: "RecurringPaymentDetails");
 
             migrationBuilder.DropTable(
-                name: "Charity");
+                name: "CharityKycDetails");
 
             migrationBuilder.DropTable(
                 name: "Templates");
+
+            migrationBuilder.DropTable(
+                name: "PaymentDetails");
+
+            migrationBuilder.DropTable(
+                name: "Charity");
 
             migrationBuilder.DropTable(
                 name: "Campaigns");

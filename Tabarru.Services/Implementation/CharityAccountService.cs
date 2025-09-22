@@ -110,6 +110,7 @@ namespace Tabarru.Services.Implementation
                         Salt = hashSalt.Item1,
                         Role = dto.Role.ToUpper(),
                         EmailVerified = false,
+                        PackageId = "0"
                     };
 
                     var addRegisterResult = await this.charityRepository.AddAsync(charity);

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Mailjet.Api" Version="2.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
   </ItemGroup>
 
   <ItemGroup>

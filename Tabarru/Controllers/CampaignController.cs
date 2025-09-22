@@ -25,7 +25,7 @@ namespace Tabarru.Controllers
             return await campaignService.CreateAsync(campaignCreateRequest.MapToDto(TokenClaimHelper.GetId(User)));
         }
 
-        [HttpGet("/{id:guid}")]
+        [HttpGet("{id:guid}")]
         public async Task<Response<CampaignReadDto>> GetById(Guid id)
         {
             return await campaignService.GetByIdAsync(id.ToString());
@@ -37,7 +37,7 @@ namespace Tabarru.Controllers
             return await campaignService.GetAllByCharityIDAsync(TokenClaimHelper.GetId(User));
         }
 
-        [HttpPut("/status")]
+        [HttpPut("status")]
         public async Task<Response<CampaignReadDto>> UpdateStatus([FromBody] CampaignUpdateStatusRequest dto)
         {
             return await campaignService.UpdateStatusAsync(dto.MapToDto(TokenClaimHelper.GetId(User)));

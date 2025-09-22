@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Tabarru.Common.Enums;
+using Tabarru.Common.Helper;
 using Tabarru.Common.Models;
 using Tabarru.Repositories.IRepository;
 using Tabarru.Repositories.Models;
@@ -30,7 +31,7 @@ namespace Tabarru.Services.Implementation
             {
                 CharityId = charityId,
                 Status = CharityKycStatus.Pending,
-                IsCharityDocumentUploaded = !string.IsNullOrEmpty(dto.IncorporationCertificate),
+                IsCharityDocumentUploaded = dto.IncorporationCertificate is { Length: > 0 },
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 CharityName = dto.CharityName,
@@ -38,13 +39,14 @@ namespace Tabarru.Services.Implementation
                 CharityNumber = dto.CharityNumber,
                 CharityKycDocuments = new CharityKycDocuments
                 {
-                    Logo = dto.Logo,
-                    IncorporationCertificate = dto.IncorporationCertificate,
-                    UtilityBill = dto.UtilityBill,
-                    TaxExemptionCertificate = dto.TaxExemptionCertificate,
-                    BankStatement = dto.BankStatement
+                    Logo = await dto.Logo.ConvertFileToBase64Async(),
+                    IncorporationCertificate = await dto.IncorporationCertificate.ConvertFileToBase64Async(),
+                    UtilityBill = await dto.UtilityBill.ConvertFileToBase64Async(),
+                    TaxExemptionCertificate = await dto.TaxExemptionCertificate.ConvertFileToBase64Async(),
+                    BankStatement = await dto.BankStatement.ConvertFileToBase64Async()
                 }
             };
+
 
             charity.KycStatus = CharityKycStatus.Pending;
             charity.IsKycVerified = false;

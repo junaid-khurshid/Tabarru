@@ -19,6 +19,7 @@ namespace Tabarru.Repositories.Models
         public PaymentStatus Status { get; set; }
 
         [Required]
+        [Column(TypeName = "decimal(18,4)")]
         public decimal Amount { get; set; }
 
         [Required]

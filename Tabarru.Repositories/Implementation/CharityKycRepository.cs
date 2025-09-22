@@ -18,7 +18,6 @@ namespace Tabarru.Repositories.Implementation
         public async Task<Charity> GetCharityByIdAsync(string charityId)
         {
             return await dbStorageContext.Charity
-                .Include(c => c) // can expand later for relations
                 .FirstOrDefaultAsync(c => c.Id == charityId);
         }
 
