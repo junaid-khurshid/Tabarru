@@ -9,7 +9,7 @@ namespace Tabarru.Services.IServices
     {
         Task<Response> SubmitKycAsync(string charityId, CharityKycDto dto);
         Task<Response> UpdateKycStatusAsync(AdminKycUpdateDto dto);
-        Task<Response<IList<Charity>>> GetAllCharitiesForAdminAsync();
+        Task<Response<IList<CharityReadDto>>> GetAllCharitiesForAdminAsync();
         Task<CharityKycStatus> GetCharityKycStatus(string CharityId);
     }
 }

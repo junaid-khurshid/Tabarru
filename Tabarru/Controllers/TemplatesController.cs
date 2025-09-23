@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Tabarru.Common.Helper;
 using Tabarru.Common.Models;
 using Tabarru.RequestModels;
@@ -7,6 +8,7 @@ using Tabarru.Services.Models;
 
 namespace Tabarru.Controllers
 {
+    [Authorize(Policy = "KycApprovedOnly", Roles = "USER,ADMIN")]
     [Route("api/[controller]")]
     [ApiController]
     public class TemplatesController : ControllerBase

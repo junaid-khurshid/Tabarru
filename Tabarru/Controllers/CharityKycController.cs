@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Tabarru.Common.Helper;
 using Tabarru.Common.Models;
-using Tabarru.Repositories.Models;
 using Tabarru.RequestModels;
 using Tabarru.Services.IServices;
 using Tabarru.Services.Models;
@@ -30,7 +29,7 @@ namespace Tabarru.Controllers
 
 
         [HttpGet("admin/all")]
-        public async Task<Response<IList<Charity>>> GetAllCharities()
+        public async Task<Response<IList<CharityReadDto>>> GetAllCharities()
         {
             return await _kycService.GetAllCharitiesForAdminAsync();
         }

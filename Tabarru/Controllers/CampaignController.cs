@@ -8,7 +8,7 @@ using Tabarru.Services.Models;
 
 namespace Tabarru.Controllers
 {
-    [Authorize(Policy = "KycApprovedOnly")]
+    [Authorize(Policy = "KycApprovedOnly", Roles = "USER,ADMIN")]
     [Route("api/[controller]")]
     [ApiController]
     public class CampaignController : ControllerBase

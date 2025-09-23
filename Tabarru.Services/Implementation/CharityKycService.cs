@@ -51,9 +51,10 @@ namespace Tabarru.Services.Implementation
             charity.KycStatus = CharityKycStatus.Pending;
             charity.IsKycVerified = false;
 
+            var charityUdpate = await charityRepository.UpdateAsync(charity);
             var added = await charityKycRepository.AddAsync(kycDetails);
 
-            if (!added)
+            if (!charityUdpate || !added)
             {
                 return new Response(HttpStatusCode.BadRequest, "Charity KYC submission failed.");
             }
@@ -86,11 +87,11 @@ namespace Tabarru.Services.Implementation
             return new Response(HttpStatusCode.OK, $"Charity KYC {dto.Status} Updated");
         }
 
-        public async Task<Response<IList<Charity>>> GetAllCharitiesForAdminAsync()
+        public async Task<Response<IList<CharityReadDto>>> GetAllCharitiesForAdminAsync()
         {
             var charities = await charityKycRepository.GetAllCharitiesAsync();
 
-            return new Response<IList<Charity>>(HttpStatusCode.OK, charities.ToList(), ResponseCode.Data);
+            return new Response<IList<CharityReadDto>>(HttpStatusCode.OK, (charities.Select(x=> x.MapToDto())).ToList(), ResponseCode.Data);
         }
 
         public Task<CharityKycStatus> GetCharityKycStatus(string CharityId)

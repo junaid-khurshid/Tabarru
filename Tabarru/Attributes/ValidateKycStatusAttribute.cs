@@ -8,31 +8,55 @@ namespace Tabarru.Attributes
 {
     public class ValidateKycStatusPolicy : AuthorizationHandler<ValidateKycStatusPolicy>, IAuthorizationRequirement
     {
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext validationContext, ValidateKycStatusPolicy validateKycUserStatusPolicy)
+        protected override Task HandleRequirementAsync(
+     AuthorizationHandlerContext validationContext,
+     ValidateKycStatusPolicy requirement)
         {
             try
             {
-                AuthorizationFilterContext authContext = (AuthorizationFilterContext)validationContext.Resource;
-                ICharityKycService kycService = (ICharityKycService)authContext.HttpContext.RequestServices.GetService(typeof(ICharityKycService));
-                var httpContextAccessor = (IHttpContextAccessor)authContext.HttpContext.RequestServices.GetService(typeof(IHttpContextAccessor));
+                HttpContext httpContext = null;
 
-                var httpContext = (validationContext.Resource as AuthorizationFilterContext)?.HttpContext;
+                // Case 1: MVC filter
+                if (validationContext.Resource is AuthorizationFilterContext filterContext)
+                {
+                    httpContext = filterContext.HttpContext;
+                }
+                // Case 2: Endpoint routing / minimal APIs
+                else if (validationContext.Resource is HttpContext ctx)
+                {
+                    httpContext = ctx;
+                }
+
+                if (httpContext == null)
+                {
+                    validationContext.Fail();
+                    return Task.CompletedTask;
+                }
+
+                var kycService = (ICharityKycService)httpContext.RequestServices
+                    .GetService(typeof(ICharityKycService));
+
                 var claims = httpContext.User;
-                var CharityId = TokenClaimHelper.GetId(claims);
+                var charityId = TokenClaimHelper.GetId(claims);
 
-                var status = TaskHelper.RunSync(() => kycService.GetCharityKycStatus(CharityId));
+                var status = TaskHelper.RunSync(() => kycService.GetCharityKycStatus(charityId));
 
                 if (status == CharityKycStatus.Approved)
-                    //return ValidationResult.Success;
-                    validationContext.Succeed(validateKycUserStatusPolicy);
+                {
+                    validationContext.Succeed(requirement);
+                }
                 else
+                {
                     validationContext.Fail();
+                }
             }
             catch
             {
                 validationContext.Fail();
             }
-            return Task.FromResult(0);
+
+            return Task.CompletedTask;
         }
+
     }
 }
