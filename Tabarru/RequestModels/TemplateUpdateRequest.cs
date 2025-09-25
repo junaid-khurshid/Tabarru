@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Tabarru.Attributes;
 using Tabarru.Services.Models;
 
 namespace Tabarru.RequestModels
@@ -10,7 +11,9 @@ namespace Tabarru.RequestModels
 
         [Required]
         public string Name { get; set; }
-        public string Icon { get; set; }
+
+        [ValidateFile(20, 2000)]
+        public IFormFile Icon { get; set; }
         public string Message { get; set; }
         [Required]
         public string CampaignId { get; set; }

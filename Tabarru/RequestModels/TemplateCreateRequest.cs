@@ -1,13 +1,14 @@
-﻿using Tabarru.Services.Models;
+﻿using Tabarru.Attributes;
+using Tabarru.Services.Models;
 
 namespace Tabarru.RequestModels
 {
     public class TemplateCreateRequest
     {
         public string Name { get; set; }
-        public string Icon { get; set; }
+        [ValidateFile(20, 2000)]
+        public IFormFile Icon { get; set; }
         public string Message { get; set; }
-        public string CampaignId { get; set; }
         public List<ModeCreateRequest> Modes { get; set; } = new();
     }
 
@@ -19,7 +20,6 @@ namespace Tabarru.RequestModels
             {
                 Name = request.Name,
                 CharityId = CharityId,
-                CampaignId = request.CampaignId,
                 Modes = request.Modes.Select(x => x.MapToDto()).ToList(),
                 Icon = request.Icon,
                 Message = request.Message

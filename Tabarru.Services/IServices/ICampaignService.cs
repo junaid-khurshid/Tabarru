@@ -11,6 +11,6 @@ namespace Tabarru.Services.IServices
 
         Task<Response<CampaignReadDto>> GetByIdAsync(string id);
 
-        Task<Response<CampaignReadDto>> UpdateStatusAsync(CampaignUpdateStatusDto dto);
+        Task<Response> UpdateStatusAsync(CampaignUpdateStatusDto dto);
     }
 }

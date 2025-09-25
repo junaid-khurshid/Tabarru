@@ -13,14 +13,14 @@ namespace Tabarru.Services.Models
 
     static class ModeExtension
     {
-        public static ModeReadDto MapToDto(this Mode campaign)
+        public static ModeReadDto MapToDto(this Mode mode)
         {
             return new ModeReadDto
             {
-                Id = campaign.Id,
-                ModeType = campaign.ModeType,
-                Amount = campaign.Amount,
-                CampaignId = campaign.CampaignId,
+                Id = mode.Id,
+                ModeType = mode.ModeType,
+                Amount = mode.ModeType == Modes.Default ? mode.Campaign.ListOfAmounts : mode.Amount.ToString(),
+                CampaignId = mode.CampaignId,
             };
         }
     }
@@ -29,7 +29,7 @@ namespace Tabarru.Services.Models
     {
         public string Id { get; set; }
         public Modes ModeType { get; set; } // enum string
-        public int Amount { get; set; }
+        public string Amount { get; set; }
         public string CampaignId { get; set; }
     }
 }

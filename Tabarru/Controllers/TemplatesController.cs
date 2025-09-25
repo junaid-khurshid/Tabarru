@@ -33,13 +33,13 @@ namespace Tabarru.Controllers
         }
 
         [HttpPost]
-        public async Task<Response> Create([FromBody] TemplateCreateRequest request)
+        public async Task<Response> Create([FromForm] TemplateCreateRequest request)
         {
             return await templateService.CreateTemplateAsync(request.MapToDto(TokenClaimHelper.GetId(User)));
         }
 
         [HttpPut]
-        public async Task<Response> Update([FromBody] TemplateUpdateRequest request)
+        public async Task<Response> Update([FromForm] TemplateUpdateRequest request)
         {
             return await templateService.UpdateTemplateAsync(request.MaptoDto(TokenClaimHelper.GetId(User)));
         }

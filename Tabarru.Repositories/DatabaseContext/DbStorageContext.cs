@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 using Tabarru.Repositories.Models;
 
 namespace Tabarru.Repositories.DatabaseContext
@@ -16,10 +15,6 @@ namespace Tabarru.Repositories.DatabaseContext
 
             base.OnModelCreating(builder);
 
-            // Composite key for join table
-            //builder.Entity<TemplateCampaign>()
-            //    .HasKey(tc => new { tc.TemplateId, tc.CampaignId });
-
             builder.Entity<PackageDetails>()
                 .Property(p => p.Id)
                 .ValueGeneratedNever();
@@ -32,21 +27,12 @@ namespace Tabarru.Repositories.DatabaseContext
                 .Property(p => p.Id)
                 .ValueGeneratedNever();
 
-            // Template → Campaign (Cascade OK) /// will remove this after removing the CampaingID from template
-            builder.Entity<Template>()
-                .HasOne(t => t.Campaign)
-                .WithMany()
-                .HasForeignKey(t => t.CampaignId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // Mode → Template (Cascade OK) /// will remove this after removing the CampaingID from template
             builder.Entity<Mode>()
                 .HasOne(m => m.Template)
                 .WithMany(t => t.Modes)
                 .HasForeignKey(m => m.TemplateId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Mode → Campaign (Restrict 🚫 prevent cascade loop) /// will remove this after removing the CampaingID from template
             builder.Entity<Mode>()
                 .HasOne(m => m.Campaign)
                 .WithMany()
@@ -61,7 +47,6 @@ namespace Tabarru.Repositories.DatabaseContext
         public DbSet<Campaign> Campaigns { get; set; }
         public DbSet<PackageDetails> PackageDetails { get; set; }
         public DbSet<Template> Templates { get; set; }
-        //public DbSet<TemplateCampaign> TemplateCampaigns { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<Mode> Modes { get; set; }
         public DbSet<PaymentDetail> PaymentDetails { get; set; } 

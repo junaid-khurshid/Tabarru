@@ -30,7 +30,8 @@ namespace Tabarru.RequestModels
                 Icon = request.Icon,
                 IsEnabled = request.IsEnabled,
                 IsDefault = request.IsDefault,
-                CharityId = CharityId
+                CharityId = CharityId,
+                ListOfAmounts =  request.ListOfAmounts,
             };
         }
     }

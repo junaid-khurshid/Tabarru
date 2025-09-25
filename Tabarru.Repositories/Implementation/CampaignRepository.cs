@@ -25,7 +25,7 @@ namespace Tabarru.Repositories.Implementation
             return await dbStorageContext.Campaigns.FirstOrDefaultAsync(x => x.CharityId.Equals(CharityId) && x.IsDefault == true);
         }
 
-        public async Task<Campaign> GetAllByCampaignIdAndCharityIdOnlyAsync(string CampaignId, string CharityId)
+        public async Task<Campaign> GetByCampaignIdAndCharityIdOnlyAsync(string CampaignId, string CharityId)
         {
             return await dbStorageContext.Campaigns.FirstOrDefaultAsync(x => x.Id.Equals(CampaignId) & x.CharityId.Equals(CharityId));
         }
@@ -46,7 +46,8 @@ namespace Tabarru.Repositories.Implementation
 
         public async Task<bool> UpdateAsync(Campaign campaign)
         {
-            dbStorageContext.Campaigns.Update(campaign);
+            dbStorageContext.Campaigns.Attach(campaign);
+            dbStorageContext.Entry(campaign).State = EntityState.Modified;
             return await dbStorageContext.SaveChangesAsync() > 0;
         }
     }

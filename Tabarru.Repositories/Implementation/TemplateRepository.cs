@@ -17,14 +17,12 @@ namespace Tabarru.Repositories.Implementation
         public async Task<Template> GetByIdAsync(string id)
         {
             return await dbStorageContext.Templates
-            .Include(x => x.Campaign)
             .Include(t => t.Modes)
             .FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task<IEnumerable<Template>> GetAllTemplatesByCharityIdAsync(string CharityId) =>
             await dbStorageContext.Templates.Where(x => x.CharityId.Equals(CharityId))
-                .Include(x => x.Campaign)
                 .Include(t => t.Modes)
                 .ToListAsync();
 
@@ -47,7 +45,6 @@ namespace Tabarru.Repositories.Implementation
         }
 
         public async Task<bool> ExistsWithCampaignAsync(string campaignId) =>
-        await dbStorageContext.Templates.AnyAsync(t => t.CampaignId == campaignId) ||
         await dbStorageContext.Modes.AnyAsync(m => m.CampaignId == campaignId);
     }
 }

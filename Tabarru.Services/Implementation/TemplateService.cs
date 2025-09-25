@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Tabarru.Common.Enums;
+using Tabarru.Common.Helper;
 using Tabarru.Common.Models;
 using Tabarru.Repositories.IRepository;
 using Tabarru.Repositories.Models;
@@ -12,12 +13,15 @@ namespace Tabarru.Services.Implementation
     {
         private readonly ITemplateRepository templateRepository;
         private readonly ICampaignRepository campaignRepository;
+        private readonly ICharityRepository charityRepository;
 
         public TemplateService(ITemplateRepository templateRepository,
-            ICampaignRepository campaignRepository)
+            ICampaignRepository campaignRepository,
+            ICharityRepository charityRepository)
         {
             this.templateRepository = templateRepository;
             this.campaignRepository = campaignRepository;
+            this.charityRepository = charityRepository;
         }
 
 
@@ -39,30 +43,38 @@ namespace Tabarru.Services.Implementation
             {
                 return new Response<TemplateReadDto>(HttpStatusCode.NotFound, "Template Details not found.");
             }
+            var dto = new TemplateReadDto
+            {
+                Id = template.Id,
+                Name = template.Name,
+                CharityId = template.CharityId,
+                Icon = template.Icon,
+                Message = template.Message,
+                Modes = template.Modes.Select(mode => new ModeReadDto
+                {
+                    Id = mode.Id,
+                    ModeType = mode.ModeType,
+                    CampaignId = mode.CampaignId,
+                    Amount = mode.ModeType == Modes.Default ? mode.Campaign.ListOfAmounts : mode.Amount.ToString()
+                }).ToList()
+            };
 
             return new Response<TemplateReadDto>(HttpStatusCode.OK, template.MapToDto(), ResponseCode.Data);
         }
 
         public async Task<Response> CreateTemplateAsync(TemplateDto request)
         {
-            if (await campaignRepository.GetByIdAsync(request.CampaignId) == null)
-            {
-                return new Response(HttpStatusCode.BadRequest, $"Campaign with {request.CampaignId} not found");
-            }
-
-            if (await templateRepository.ExistsWithCampaignAsync(request.CampaignId))
-            {
-                return new Response(HttpStatusCode.BadRequest, "Campaign already used in another template or mode.");
-            }
+            var charity = await charityRepository.GetByIdAsync(request.CharityId);
+            if (charity == null)
+                return new Response(HttpStatusCode.NotFound, "Charity not found");
 
             var template = new Template
             {
                 Id = Guid.NewGuid().ToString(),
                 CharityId = request.CharityId,
                 Name = request.Name,
-                Icon = request.Icon,
+                Icon = await request.Icon.ConvertFileToBase64Async(),
                 Message = request.Message,
-                CampaignId = request.CampaignId,
             };
 
             foreach (var mode in request.Modes)
@@ -82,7 +94,7 @@ namespace Tabarru.Services.Implementation
                     template.Modes.Add(new Mode
                     {
                         ModeType = mode.ModeType,
-                        Amount = mode.Amount,
+                        Amount = mode.ModeType == Modes.Default ? 0 : mode.Amount,
                         CampaignId = mode.CampaignId,
                         TemplateId = template.Id,
                     });
@@ -99,35 +111,34 @@ namespace Tabarru.Services.Implementation
 
         public async Task<Response> UpdateTemplateAsync(TemplateUpdateDto request)
         {
+            var charity = await charityRepository.GetByIdAsync(request.CharityId);
+            if (charity == null)
+                return new Response(HttpStatusCode.NotFound, "Charity not found");
+
             var template = await templateRepository.GetByIdAsync(request.TemplateId);
             if (template == null)
                 return new Response(HttpStatusCode.NotFound, "Template Details not found.");
 
-            if (await templateRepository.ExistsWithCampaignAsync(request.CampaignId) && request.CampaignId != template.CampaignId)
-            {
-                return new Response(HttpStatusCode.BadRequest, "Campaign already used in another template or mode.");
-            }
-
-            foreach (var mode in request.Modes)
-            {
-                if (await templateRepository.ExistsWithCampaignAsync(mode.CampaignId) &&
-                    !template.Modes.Any(m => m.CampaignId == mode.CampaignId))
-                    return new Response(HttpStatusCode.BadRequest, "Mode campaign already used");
-            }
 
             template.Name = request.Name;
             template.CharityId = request.CharityId;
-            template.CampaignId = request.CampaignId;
+            template.Icon = await request.Icon.ConvertFileToBase64Async();
+            template.Message = request.Message;
 
             template.Modes.Clear();
+
             foreach (var modeDto in request.Modes)
             {
+                if (await templateRepository.ExistsWithCampaignAsync(modeDto.CampaignId) &&
+                    !template.Modes.Any(m => m.CampaignId == modeDto.CampaignId))
+                    return new Response(HttpStatusCode.BadRequest, $"Mode campaign {modeDto.CampaignId} already used");
+
                 template.Modes.Add(new Mode
                 {
                     ModeType = modeDto.ModeType,
                     CampaignId = modeDto.CampaignId,
-                    Amount = modeDto.Amount,
-                    TemplateId = template.Id
+                    Amount = modeDto.ModeType == Modes.Default ? 0 : modeDto.Amount,
+                    TemplateId = template.Id,
                 });
             }
 
@@ -138,7 +149,7 @@ namespace Tabarru.Services.Implementation
 
             return new Response(HttpStatusCode.BadRequest, "Template Updating Failed.");
         }
-
+            
         public async Task<Response> DeleteTemplateAsync(string id)
         {
             var template = await templateRepository.GetByIdAsync(id);

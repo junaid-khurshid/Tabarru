@@ -33,9 +33,11 @@ namespace Tabarru.Services.Implementation
             if (dto.IsDefault)
             {
                 var currentDefault = await campaignRepository.GetAllByCharityIdAndDefaultOneOnlyAsync(dto.CharityId);
-
-                currentDefault.IsDefault = false;
-                await campaignRepository.UpdateAsync(currentDefault);
+                if (currentDefault != null)
+                {
+                    currentDefault.IsDefault = false;
+                    await campaignRepository.UpdateAsync(currentDefault);
+                }
             }
 
             var campaign = new Campaign
@@ -77,15 +79,13 @@ namespace Tabarru.Services.Implementation
             return new Response<CampaignReadDto>(HttpStatusCode.OK, campaign.MapToDto(), ResponseCode.Data);
         }
 
-        public async Task<Response<CampaignReadDto>> UpdateStatusAsync(CampaignUpdateStatusDto dto)
+        public async Task<Response> UpdateStatusAsync(CampaignUpdateStatusDto dto)
         {
-            var campaign = await campaignRepository.GetAllByCampaignIdAndCharityIdOnlyAsync(dto.CampaignId, dto.CharityId);
+            var campaign = await campaignRepository.GetByCampaignIdAndCharityIdOnlyAsync(dto.CampaignId, dto.CharityId);
             if (campaign == null)
             {
-                return new Response<CampaignReadDto>(HttpStatusCode.BadRequest, "Campaign Details not found");
+                return new Response(HttpStatusCode.BadRequest, "Campaign Details not found");
             }
-
-            // If setting IsDefault to true, unset default on others
 
             using (var transaction = await dbContext.Database.BeginTransactionAsync())
             {
@@ -104,9 +104,14 @@ namespace Tabarru.Services.Implementation
                 campaign.IsEnabled = dto.IsEnabled;
                 campaign.IsDefault = dto.IsDefault;
 
-                await campaignRepository.UpdateAsync(campaign);
+                if (await campaignRepository.UpdateAsync(campaign))
+                {
+                    await transaction.CommitAsync();
+                    return new Response(HttpStatusCode.OK, "Campaign Updated Successfully");
+                }
 
-                return new Response<CampaignReadDto>(HttpStatusCode.OK, campaign.MapToDto(), ResponseCode.Data);
+                await transaction.RollbackAsync();
+                return new Response(HttpStatusCode.OK, "Campaign Updating Failed.");
             }
         }
     }

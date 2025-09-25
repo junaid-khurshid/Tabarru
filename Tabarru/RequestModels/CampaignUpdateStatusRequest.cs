@@ -17,14 +17,14 @@ namespace Tabarru.RequestModels
 
     static class CampaignUpdateStatusExtension
     {
-        public static CampaignUpdateStatusDto MapToDto(this CampaignUpdateStatusRequest loginRequest, string CharityId)
+        public static CampaignUpdateStatusDto MapToDto(this CampaignUpdateStatusRequest campaignUpdateStatusRequest, string CharityId)
         {
             return new CampaignUpdateStatusDto
             {
-                CampaignId = loginRequest.CampaignId,
+                CampaignId = campaignUpdateStatusRequest.CampaignId,
                 CharityId = CharityId,
-                IsDefault = loginRequest.IsDefault,
-                IsEnabled = loginRequest.IsEnabled,
+                IsDefault = campaignUpdateStatusRequest.IsDefault,
+                IsEnabled = campaignUpdateStatusRequest.IsEnabled,
             };
         }
 

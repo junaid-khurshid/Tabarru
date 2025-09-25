@@ -1,4 +1,6 @@
-﻿namespace Tabarru.Services.Models
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Tabarru.Services.Models
 {
     public class TemplateUpdateDto
     {
@@ -6,7 +8,7 @@
         public string Name { get; set; }
         public string CharityId { get; set; }
         public string CampaignId { get; set; }
-        public string Icon { get; set; }
+        public IFormFile Icon { get; set; }
         public string Message { get; set; }
         public List<ModeDto> Modes { get; set; }
     }

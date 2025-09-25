@@ -11,6 +11,6 @@ namespace Tabarru.Repositories.IRepository
         Task<Campaign> GetAllByCharityIdAndDefaultOneOnlyAsync(string CharityId);
         Task<Campaign> GetByNameAndCharityIdAsync(string Name, string CharityId);
         Task<bool> UpdateAsync(Campaign campaign);
-        Task<Campaign> GetAllByCampaignIdAndCharityIdOnlyAsync(string CampaignId, string CharityId);
+        Task<Campaign> GetByCampaignIdAndCharityIdOnlyAsync(string CampaignId, string CharityId);
     }
 }
