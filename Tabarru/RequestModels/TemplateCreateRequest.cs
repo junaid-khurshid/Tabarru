@@ -6,7 +6,7 @@ namespace Tabarru.RequestModels
     public class TemplateCreateRequest
     {
         public string Name { get; set; }
-        [ValidateFile(20, 2000)]
+        [ValidateFile(5, 2000)]
         public IFormFile Icon { get; set; }
         public string Message { get; set; }
         public List<ModeCreateRequest> Modes { get; set; } = new();

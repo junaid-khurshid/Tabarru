@@ -7,9 +7,9 @@ namespace Tabarru.Services.Models
     {
         public string Id { get; set; }
         public string CharityId { get; set; }
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
         public IFormFile Icon { get; set; }
-        public string ListOfAmounts { get; set; } = null!;
+        public string ListOfAmounts { get; set; }
         public bool IsEnabled { get; set; }
         public bool IsDefault { get; set; }
     }
@@ -35,9 +35,9 @@ namespace Tabarru.Services.Models
     {
         public string Id { get; set; }
         public string CharityId { get; set; }
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
         public string Icon { get; set; }
-        public string ListOfAmounts { get; set; } = null!;
+        public string ListOfAmounts { get; set; }
         public bool IsEnabled { get; set; }
         public bool IsDefault { get; set; }
     }

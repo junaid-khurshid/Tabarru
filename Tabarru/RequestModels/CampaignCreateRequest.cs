@@ -7,14 +7,14 @@ namespace Tabarru.RequestModels
     public class CampaignCreateRequest
     {
         [Required(ErrorMessage = "REQUIRED")]
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
 
         [Required(ErrorMessage = "REQUIRED")]
-        [ValidateFile(200, 2000)]
+        [ValidateFile(5, 2000)]
         public IFormFile Icon { get; set; }
 
         [Required(ErrorMessage = "REQUIRED")]
-        public string ListOfAmounts { get; set; } = null!;
+        public string ListOfAmounts { get; set; }
 
         public bool IsEnabled { get; set; } = true;
         public bool IsDefault { get; set; } = false;
@@ -31,7 +31,7 @@ namespace Tabarru.RequestModels
                 IsEnabled = request.IsEnabled,
                 IsDefault = request.IsDefault,
                 CharityId = CharityId,
-                ListOfAmounts =  request.ListOfAmounts,
+                ListOfAmounts = request.ListOfAmounts,
             };
         }
     }

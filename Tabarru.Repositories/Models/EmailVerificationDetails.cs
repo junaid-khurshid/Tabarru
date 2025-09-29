@@ -13,7 +13,7 @@ namespace Tabarru.Repositories.Models
         [ForeignKey(nameof(Charity))]
         public string CharityId { get; set; }
 
-        public string Token { get; set; } = null!; // 6-digit code as string
+        public string Token { get; set; } // 6-digit code as string
         public string Email { get; set; }
 
         public DateTime ExpiryTime { get; set; }

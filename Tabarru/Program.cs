@@ -115,60 +115,48 @@ namespace Tabarru
 
         private static async Task InitializeDatabaseAsync(IServiceProvider serviceProvider, IHostEnvironment env, WebApplication app)
         {
-            using (var scope = app.Services.CreateScope())
+            using var scope = app.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<DbStorageContext>();
+
+            while (true)
             {
-                var db = scope.ServiceProvider.GetRequiredService<DbStorageContext>();
-                var packageRepository = scope.ServiceProvider.GetRequiredService<IPackageRepository>();
-
-                while (true)
+                try
                 {
-                    try
+                    if (await db.Database.CanConnectAsync())
                     {
-                        if (await db.Database.CanConnectAsync())
-                        {
-                            Console.WriteLine("[DB Init] Database already exists ✅");
+                        Console.WriteLine("[DB Init] Database connection successful ✅");
 
-                            var tableExists = await db.Database.ExecuteSqlRawAsync(
-                                @"IF OBJECT_ID(N'[dbo].[PackageDetails]', N'U') IS NOT NULL SELECT 1 ELSE SELECT 0"
-                            );
-
-                            if (tableExists == 1)
-                            {
-                                Console.WriteLine("[DB Init] Tables already exist ✅");
-                            }
-                            else
-                            {
-                                Console.WriteLine("[DB Init] Tables not found — creating...");
-                                await db.Database.EnsureCreatedAsync();
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("[DB Init] Database not found — creating...");
-                            await db.Database.EnsureCreatedAsync();
-                        }
-
-                        if (!db.Set<PackageDetails>().Any())
-                        {
-                            var filePath = Path.Combine(env.ContentRootPath, "Defaults", "PackageDetails.json");
-                            if (File.Exists(filePath))
-                            {
-                                var packageDetailsList = GetDefaultValues<List<PackageDetails>>(filePath);
-
-                                foreach (var package in packageDetailsList!)
-                                {
-                                    await packageRepository.AddAsync(package);
-                                }
-                            }
-                        }
-
-                        break;
+                        // Apply any pending migrations automatically
+                        await db.Database.MigrateAsync();
+                        Console.WriteLine("[DB Init] Migrations applied ✅");
                     }
-                    catch (SqlException ex)
+                    else
                     {
-                        Console.WriteLine($"[DB Init] Waiting for SQL Server... Error: {ex.Message}");
-                        await Task.Delay(5000);
+                        Console.WriteLine("[DB Init] Database not found — creating...");
+                        await db.Database.EnsureCreatedAsync();
                     }
+
+                    if (!db.Set<PackageDetails>().Any())
+                    {
+                        var filePath = Path.Combine(env.ContentRootPath, "Defaults", "PackageDetails.json");
+                        if (File.Exists(filePath))
+                        {
+                            var packageRepository = scope.ServiceProvider.GetRequiredService<IPackageRepository>();
+                            var packageDetailsList = GetDefaultValues<List<PackageDetails>>(filePath);
+
+                            foreach (var package in packageDetailsList!)
+                            {
+                                await packageRepository.AddAsync(package);
+                            }
+                        }
+                    }
+
+                    break;
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine($"[DB Init] Waiting for SQL Server... Error: {ex.Message}");
+                    await Task.Delay(5000);
                 }
             }
         }

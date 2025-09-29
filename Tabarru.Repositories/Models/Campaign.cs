@@ -13,14 +13,14 @@ namespace Tabarru.Repositories.Models
         public string CharityId { get; set; }
 
         [Required, MaxLength(150)]
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
 
         // store icon name or url
         [Required]
         public string Icon { get; set; }
 
         [Required]
-        public string ListOfAmounts { get; set; } = null!;
+        public string ListOfAmounts { get; set; }
 
         public bool IsEnabled { get; set; } = false;
 
