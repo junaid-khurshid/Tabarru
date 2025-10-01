@@ -10,7 +10,7 @@ namespace Tabarru.Repositories.Models
         public string Id { get; set; }
 
         [Required]
-        public string DeviceName { get; set; } = string.Empty;
+        public string DeviceName { get; set; }
 
         [Required]
         public string CharityId { get; set; }
@@ -19,7 +19,7 @@ namespace Tabarru.Repositories.Models
         public string TemplateId { get; set; }
 
         [Required]
-        public string DeviceLocation { get; set; } = string.Empty;
+        public string DeviceLocation { get; set; }
 
         [ForeignKey(nameof(TemplateId))]
         public Template Template { get; set; }

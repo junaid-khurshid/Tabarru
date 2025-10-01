@@ -5,10 +5,10 @@ namespace Tabarru.Services.Models
     public class PackageDetailsDto
     {
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Price { get; set; } = string.Empty;
+        public string Name { get; set; }
+        public string Price { get; set; }
         public string? BillingCycle { get; set; }
-        public List<string> Features { get; set; } = new();
+        public List<string> Features { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
     }
 
