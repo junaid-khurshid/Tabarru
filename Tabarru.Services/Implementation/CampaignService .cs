@@ -39,6 +39,7 @@ namespace Tabarru.Services.Implementation
                     await campaignRepository.UpdateAsync(currentDefault);
                 }
             }
+            Console.WriteLine($"Campaign Details : {dto.Name}, {dto.ListOfAmounts}");
 
             var campaign = new Campaign
             {

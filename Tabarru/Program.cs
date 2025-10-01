@@ -117,14 +117,16 @@ namespace Tabarru
         {
             using var scope = app.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<DbStorageContext>();
+            Console.WriteLine("In the InitiazlizeDB Scope");
 
             while (true)
             {
                 try
                 {
+                    Console.WriteLine("[DB Init] Database connection started");
                     if (await db.Database.CanConnectAsync())
                     {
-                        Console.WriteLine("[DB Init] Database connection successful ✅");
+                        Console.WriteLine("[DB Init] Database connection successful");
 
                         // Apply any pending migrations automatically
                         await db.Database.MigrateAsync();
@@ -135,9 +137,12 @@ namespace Tabarru
                         Console.WriteLine("[DB Init] Database not found — creating...");
                         await db.Database.EnsureCreatedAsync();
                     }
+                    
+                    Console.WriteLine("Checking DB for Package Details");
 
                     if (!db.Set<PackageDetails>().Any())
                     {
+                        Console.WriteLine("Inserting Data in Package Details");
                         var filePath = Path.Combine(env.ContentRootPath, "Defaults", "PackageDetails.json");
                         if (File.Exists(filePath))
                         {

@@ -134,9 +134,7 @@ namespace Tabarru.Services.Implementation
                         IsUsed = false
                     };
 
-                    string htmlPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Tabarru.Common", "HtmlTemplates", "EmailVerificationBody.html");
-                    string htmlContent = File.ReadAllText(htmlPath);
-                    string finalHtml = htmlContent.Replace("{{CODE}}", emailVerificationCode);
+                    string finalHtml = GetEmailTemplate(emailVerificationCode);
 
                     //Send Email Work
                     var success = await this.emailMessageService.SendEmailAsync(
@@ -164,6 +162,19 @@ namespace Tabarru.Services.Implementation
                     throw ex;
                 }
             }
+        }
+
+        private static string GetEmailTemplate(string emailVerificationCode)
+        {
+            Console.WriteLine($" directory : {Directory.GetCurrentDirectory()}");
+            
+            string htmlPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Tabarru.Common", "HtmlTemplates", "EmailVerificationBody.html");
+            Console.WriteLine($" html path : {htmlPath}");
+
+            string htmlContent = File.ReadAllText(htmlPath);
+ 
+            string finalHtml = htmlContent.Replace("{{CODE}}", emailVerificationCode);
+            return finalHtml;
         }
 
         public async Task<Response> ReGenerateEmailVerificationTokenByEmail(string email)

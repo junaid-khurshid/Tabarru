@@ -18,7 +18,8 @@ services:
     build:
       context: .
       dockerfile: Tabarru/Dockerfile
-    container_name: tabarru_api
+    container_name: tabarru_v2_api
+    image: tabarru_api_v2:latest   # <--- this sets the image name
     ports:
       - "8080:8080"
     depends_on:

@@ -68,6 +68,11 @@ namespace Tabarru.Services.Implementation
             if (charity == null)
                 return new Response(HttpStatusCode.NotFound, "Charity not found");
 
+            if (request.Modes.Count() == 0)
+            {
+                return new Response(HttpStatusCode.BadRequest, "Modes should not be empty");
+            }
+
             var template = new Template
             {
                 Id = Guid.NewGuid().ToString(),

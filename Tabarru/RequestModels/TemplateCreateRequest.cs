@@ -1,4 +1,6 @@
-﻿using Tabarru.Attributes;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations.Schema;
+using Tabarru.Attributes;
 using Tabarru.Services.Models;
 
 namespace Tabarru.RequestModels
@@ -9,7 +11,14 @@ namespace Tabarru.RequestModels
         [ValidateFile(5, 2000)]
         public IFormFile Icon { get; set; }
         public string Message { get; set; }
-        public List<ModeCreateRequest> Modes { get; set; } = new();
+        public string Modes { get; set; }
+
+        // Helper to get deserialized list
+        [NotMapped]
+        public List<ModeCreateRequest> ParsedModes =>
+            string.IsNullOrWhiteSpace(Modes)
+                ? new List<ModeCreateRequest>()
+                : JsonConvert.DeserializeObject<List<ModeCreateRequest>>(Modes);
     }
 
     static class TemplateExtension
@@ -20,9 +29,9 @@ namespace Tabarru.RequestModels
             {
                 Name = request.Name,
                 CharityId = CharityId,
-                Modes = request.Modes.Select(x => x.MapToDto()).ToList(),
+                Modes = request.ParsedModes.Select(x => x.MapToDto()).ToList(),
                 Icon = request.Icon,
-                Message = request.Message
+                Message = request.Message,
             };
         }
     }

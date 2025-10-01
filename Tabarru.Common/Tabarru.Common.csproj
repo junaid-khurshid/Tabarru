@@ -13,6 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="HtmlTemplates\**\*.*" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+
+  <ItemGroup>
     <Folder Include="HtmlTemplates\" />
     <Folder Include="Seeder\" />
   </ItemGroup>

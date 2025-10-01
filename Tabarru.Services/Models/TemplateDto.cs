@@ -11,7 +11,7 @@ namespace Tabarru.Services.Models
         public string CampaignId { get; set; }
         public IFormFile Icon { get; set; }
         public string Message { get; set; }
-        public List<ModeDto> Modes { get; set; } = new();
+        public List<ModeDto> Modes { get; set; }
     }
 
     static class TemplateExtension

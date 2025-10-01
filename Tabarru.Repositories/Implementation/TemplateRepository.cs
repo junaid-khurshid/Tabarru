@@ -24,6 +24,7 @@ namespace Tabarru.Repositories.Implementation
         public async Task<IEnumerable<Template>> GetAllTemplatesByCharityIdAsync(string CharityId) =>
             await dbStorageContext.Templates.Where(x => x.CharityId.Equals(CharityId))
                 .Include(t => t.Modes)
+                    .ThenInclude(c => c.Campaign)
                 .ToListAsync();
 
         public async Task<bool> AddAsync(Template template)
