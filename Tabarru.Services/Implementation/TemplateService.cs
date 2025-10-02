@@ -43,6 +43,7 @@ namespace Tabarru.Services.Implementation
             {
                 return new Response<TemplateReadDto>(HttpStatusCode.NotFound, "Template Details not found.");
             }
+
             var dto = new TemplateReadDto
             {
                 Id = template.Id,
@@ -50,7 +51,7 @@ namespace Tabarru.Services.Implementation
                 CharityId = template.CharityId,
                 Icon = template.Icon,
                 Message = template.Message,
-                Modes = template.Modes.Select(mode => new ModeReadDto
+                Modes = template.Modes.Where(m => !m.IsDeleted).Select(mode => new ModeReadDto
                 {
                     Id = mode.Id,
                     ModeType = mode.ModeType,
@@ -59,7 +60,7 @@ namespace Tabarru.Services.Implementation
                 }).ToList()
             };
 
-            return new Response<TemplateReadDto>(HttpStatusCode.OK, template.MapToDto(), ResponseCode.Data);
+            return new Response<TemplateReadDto>(HttpStatusCode.OK, dto, ResponseCode.Data);
         }
 
         public async Task<Response> CreateTemplateAsync(TemplateDto request)
@@ -130,15 +131,14 @@ namespace Tabarru.Services.Implementation
             template.Icon = await request.Icon.ConvertFileToBase64Async();
             template.Message = request.Message;
 
-            template.Modes.Clear();
-
+            var newModes = new List<Mode>();
             foreach (var modeDto in request.Modes)
             {
                 if (await templateRepository.ExistsWithCampaignAsync(modeDto.CampaignId) &&
                     !template.Modes.Any(m => m.CampaignId == modeDto.CampaignId))
                     return new Response(HttpStatusCode.BadRequest, $"Mode campaign {modeDto.CampaignId} already used");
 
-                template.Modes.Add(new Mode
+                newModes.Add(new Mode
                 {
                     ModeType = modeDto.ModeType,
                     CampaignId = modeDto.CampaignId,
@@ -147,6 +147,14 @@ namespace Tabarru.Services.Implementation
                 });
             }
 
+            if (await templateRepository.DeleteModesAsync(template.Modes.ToList()))
+            {
+                return new Response(HttpStatusCode.OK, "Template Updating Failed");
+            }
+
+            template.Modes.Clear();
+            template.Modes = newModes;
+
             if (await templateRepository.UpdateAsync(template))
             {
                 return new Response(HttpStatusCode.OK, "Template Updated Successfully");
@@ -154,7 +162,7 @@ namespace Tabarru.Services.Implementation
 
             return new Response(HttpStatusCode.BadRequest, "Template Updating Failed.");
         }
-            
+
         public async Task<Response> DeleteTemplateAsync(string id)
         {
             var template = await templateRepository.GetByIdAsync(id);

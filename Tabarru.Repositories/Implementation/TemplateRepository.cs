@@ -16,9 +16,10 @@ namespace Tabarru.Repositories.Implementation
 
         public async Task<Template> GetByIdAsync(string id)
         {
-            return await dbStorageContext.Templates
+            return await dbStorageContext.Templates.Where(t => t.Id.Equals(id))
             .Include(t => t.Modes)
-            .FirstOrDefaultAsync(t => t.Id == id);
+                .ThenInclude(c => c.Campaign)
+             .FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<Template>> GetAllTemplatesByCharityIdAsync(string CharityId) =>
@@ -42,6 +43,12 @@ namespace Tabarru.Repositories.Implementation
         public async Task<bool> DeleteAsync(Template template)
         {
             dbStorageContext.Templates.Remove(template);
+            return await dbStorageContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> DeleteModesAsync(List<Mode> modes)
+        {
+            dbStorageContext.Modes.RemoveRange(modes);
             return await dbStorageContext.SaveChangesAsync() > 0;
         }
 

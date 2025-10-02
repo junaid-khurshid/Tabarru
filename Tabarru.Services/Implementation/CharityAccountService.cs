@@ -167,12 +167,18 @@ namespace Tabarru.Services.Implementation
         private static string GetEmailTemplate(string emailVerificationCode)
         {
             Console.WriteLine($" directory : {Directory.GetCurrentDirectory()}");
-            
-            string htmlPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Tabarru.Common", "HtmlTemplates", "EmailVerificationBody.html");
+
+            string htmlPath1 = Path.Combine(Directory.GetCurrentDirectory(), "Tabarru.Common", "HtmlTemplates", "EmailVerificationBody.html");
+            string htmlPath = Path.Combine(AppContext.BaseDirectory, "HtmlTemplates", "EmailVerificationBody.html");
+
+            Console.WriteLine($" html path 1 : {htmlPath1}");
             Console.WriteLine($" html path : {htmlPath}");
 
+            if (!File.Exists(htmlPath))
+                throw new FileNotFoundException($"Email template not found at {htmlPath}");
+
             string htmlContent = File.ReadAllText(htmlPath);
- 
+
             string finalHtml = htmlContent.Replace("{{CODE}}", emailVerificationCode);
             return finalHtml;
         }

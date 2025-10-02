@@ -4,7 +4,7 @@ using Tabarru.Common.Enums;
 
 namespace Tabarru.Repositories.Models
 {
-    public class Mode : EntityMetaData
+    public class Mode : EntityMetaDataWithDeleteAble
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -19,6 +19,7 @@ namespace Tabarru.Repositories.Models
         public string TemplateId { get; set; }
 
         public Campaign Campaign { get; set; }
+        [ForeignKey(nameof(TemplateId))]
         public Template Template { get; set; }
 
         [Required]

@@ -20,10 +20,10 @@ namespace Tabarru.Controllers
             this.templateService = templateService;
         }
 
-        [HttpGet("charity/{charityId}")]
-        public async Task<Response<IEnumerable<TemplateReadDto>>> GetAll(string charityId)
+        [HttpGet("all")]
+        public async Task<Response<IEnumerable<TemplateReadDto>>> GetAll()
         {
-            return await templateService.GetAllTemplatesAsync(charityId);
+            return await templateService.GetAllTemplatesAsync(TokenClaimHelper.GetId(User));
         }
 
         [HttpGet("{id}")]

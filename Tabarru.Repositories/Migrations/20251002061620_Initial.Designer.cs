@@ -12,7 +12,7 @@ using Tabarru.Repositories.DatabaseContext;
 namespace Tabarru.Repositories.Migrations
 {
     [DbContext(typeof(DbStorageContext))]
-    [Migration("20251001081226_Initial")]
+    [Migration("20251002061620_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

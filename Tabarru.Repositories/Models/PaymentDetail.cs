@@ -4,7 +4,7 @@ using Tabarru.Common.Enums;
 
 namespace Tabarru.Repositories.Models
 {
-    public class PaymentDetail : EntityMetaData
+    public class PaymentDetail : EntityMetaDataWithDeleteAble
     {
         [Key]
         public string Id { get; set; }

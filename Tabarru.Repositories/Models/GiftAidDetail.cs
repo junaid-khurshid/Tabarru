@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tabarru.Repositories.Models 
 {
-    public class GiftAidDetail : EntityMetaData
+    public class GiftAidDetail : EntityMetaDataWithDeleteAble
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

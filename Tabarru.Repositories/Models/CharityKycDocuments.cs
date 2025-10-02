@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tabarru.Repositories.Models
 {
-    public class CharityKycDocuments : EntityMetaData
+    public class CharityKycDocuments : EntityMetaDataWithDeleteAble
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tabarru.Repositories.DatabaseContext;
 
@@ -11,9 +12,11 @@ using Tabarru.Repositories.DatabaseContext;
 namespace Tabarru.Repositories.Migrations
 {
     [DbContext(typeof(DbStorageContext))]
-    partial class DbStorageContextModelSnapshot : ModelSnapshot
+    [Migration("20251002082015_addedforeignKeyInModesTable")]
+    partial class addedforeignKeyInModesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,9 +80,6 @@ namespace Tabarru.Repositories.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("EmailVerified")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsKycVerified")
@@ -157,9 +157,6 @@ namespace Tabarru.Repositories.Migrations
                     b.Property<bool>("IsCharityDocumentUploaded")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -198,9 +195,6 @@ namespace Tabarru.Repositories.Migrations
                     b.Property<string>("IncorporationCertificate")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Logo")
                         .IsRequired()
@@ -246,9 +240,6 @@ namespace Tabarru.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("TemplateId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -283,9 +274,6 @@ namespace Tabarru.Repositories.Migrations
                     b.Property<DateTime>("ExpiryTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsUsed")
                         .HasColumnType("bit");
 
@@ -319,9 +307,6 @@ namespace Tabarru.Repositories.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("PaymentDetailId")
                         .IsRequired()
@@ -368,9 +353,6 @@ namespace Tabarru.Repositories.Migrations
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<int>("ModeType")
                         .HasColumnType("int");
@@ -458,9 +440,6 @@ namespace Tabarru.Repositories.Migrations
                     b.Property<bool>("IsBankFeeCovered")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsGiftAid")
                         .HasColumnType("bit");
 
@@ -515,9 +494,6 @@ namespace Tabarru.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("NextRecurringDate")
                         .HasColumnType("datetime2");
 
@@ -558,9 +534,6 @@ namespace Tabarru.Repositories.Migrations
                     b.Property<string>("Icon")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Message")
                         .IsRequired()

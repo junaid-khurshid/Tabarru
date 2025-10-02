@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 using Tabarru.Repositories.Models;
 
 namespace Tabarru.Repositories.DatabaseContext
@@ -27,6 +28,11 @@ namespace Tabarru.Repositories.DatabaseContext
                 .Property(p => p.Id)
                 .ValueGeneratedNever();
 
+            builder.Entity<Template>()
+                .HasMany(t => t.Modes)
+                .WithOne(m => m.Template)
+                .HasForeignKey(m => m.TemplateId);
+
             builder.Entity<Mode>()
                 .HasOne(m => m.Template)
                 .WithMany(t => t.Modes)
@@ -49,7 +55,7 @@ namespace Tabarru.Repositories.DatabaseContext
         public DbSet<Template> Templates { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<Mode> Modes { get; set; }
-        public DbSet<PaymentDetail> PaymentDetails { get; set; } 
+        public DbSet<PaymentDetail> PaymentDetails { get; set; }
         public DbSet<GiftAidDetail> GiftAidDetails { get; set; }
         public DbSet<RecurringPaymentDetail> RecurringPaymentDetails { get; set; }
 

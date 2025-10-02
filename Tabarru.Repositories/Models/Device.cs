@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tabarru.Repositories.Models
 {
-    public class Device : EntityMetaData
+    public class Device : EntityMetaDataWithDeleteAble
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

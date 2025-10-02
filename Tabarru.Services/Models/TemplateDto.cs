@@ -25,7 +25,7 @@ namespace Tabarru.Services.Models
                 Name = template.Name,
                 Icon = template.Icon,
                 Message = template.Message,
-                Modes = template.Modes.Select(x => x.MapToDto())
+                Modes = template.Modes.Where(m => !m.IsDeleted).Select(x => x.MapToDto())
             };
         }
     }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tabarru.Repositories.Models
 {
-    public class Template : EntityMetaData
+    public class Template : EntityMetaDataWithDeleteAble
     {
         [Key]
         public string Id { get; set; }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Tabarru.Repositories.Models
 {
-    public class RecurringPaymentDetail : EntityMetaData
+    public class RecurringPaymentDetail : EntityMetaDataWithDeleteAble
     {
 
         [Key]

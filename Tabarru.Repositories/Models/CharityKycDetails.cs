@@ -5,7 +5,7 @@ using Tabarru.Common.Enums;
 
 namespace Tabarru.Repositories.Models
 {
-    public class CharityKycDetails : EntityMetaData
+    public class CharityKycDetails : EntityMetaDataWithDeleteAble
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

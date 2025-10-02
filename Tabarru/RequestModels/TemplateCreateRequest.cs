@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Tabarru.Attributes;
 using Tabarru.Services.Models;
@@ -7,10 +8,14 @@ namespace Tabarru.RequestModels
 {
     public class TemplateCreateRequest
     {
+        [Required]
         public string Name { get; set; }
+
         [ValidateFile(5, 2000)]
         public IFormFile Icon { get; set; }
         public string Message { get; set; }
+
+        [Required]
         public string Modes { get; set; }
 
         // Helper to get deserialized list
