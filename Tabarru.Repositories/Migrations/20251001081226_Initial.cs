@@ -124,19 +124,12 @@ namespace Tabarru.Repositories.Migrations
                     Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     Icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CampaignId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Templates", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Templates_Campaigns_CampaignId",
-                        column: x => x.CampaignId,
-                        principalTable: "Campaigns",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -333,11 +326,6 @@ namespace Tabarru.Repositories.Migrations
                 name: "IX_RecurringPaymentDetails_PaymentDetailId",
                 table: "RecurringPaymentDetails",
                 column: "PaymentDetailId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Templates_CampaignId",
-                table: "Templates",
-                column: "CampaignId");
         }
 
         /// <inheritdoc />
@@ -368,6 +356,9 @@ namespace Tabarru.Repositories.Migrations
                 name: "CharityKycDetails");
 
             migrationBuilder.DropTable(
+                name: "Campaigns");
+
+            migrationBuilder.DropTable(
                 name: "Templates");
 
             migrationBuilder.DropTable(
@@ -375,9 +366,6 @@ namespace Tabarru.Repositories.Migrations
 
             migrationBuilder.DropTable(
                 name: "Charity");
-
-            migrationBuilder.DropTable(
-                name: "Campaigns");
         }
     }
 }

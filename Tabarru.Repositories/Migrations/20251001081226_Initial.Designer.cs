@@ -12,8 +12,8 @@ using Tabarru.Repositories.DatabaseContext;
 namespace Tabarru.Repositories.Migrations
 {
     [DbContext(typeof(DbStorageContext))]
-    [Migration("20250928200919_Remove NUll validation")]
-    partial class RemoveNUllvalidation
+    [Migration("20251001081226_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
