@@ -52,7 +52,7 @@ namespace Tabarru.Services.Implementation
         {
             var charity = await this.charityRepository.GetByEmailAsync(dto.Email);
             if (charity == null)
-                return new Response<LoginResponse>(HttpStatusCode.NotFound, new LoginResponse { EmailConfirmed = false }, "Sorry! Cahrity does not exists with this email address..", ResponseCode.Errors);
+                return new Response<LoginResponse>(HttpStatusCode.NotFound, new LoginResponse { EmailConfirmed = false }, "Sorry! Charity does not exists with this email address..", ResponseCode.Errors);
 
             if (charity.EmailVerified == false)
                 return new Response<LoginResponse>(HttpStatusCode.BadRequest, new LoginResponse { EmailConfirmed = false }, "Sorry! Email is not verified.", ResponseCode.Errors);
