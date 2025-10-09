@@ -123,8 +123,7 @@ namespace Tabarru.Services.Implementation
 
             var template = await templateRepository.GetByIdAsync(request.TemplateId);
             if (template == null)
-                return new Response(HttpStatusCode.NotFound, "Template Details not found.");
-
+                return new Response(HttpStatusCode.NotFound, "Template details not found");
 
             template.Name = request.Name;
             template.CharityId = request.CharityId;
@@ -143,22 +142,22 @@ namespace Tabarru.Services.Implementation
                     ModeType = modeDto.ModeType,
                     CampaignId = modeDto.CampaignId,
                     Amount = modeDto.ModeType == Modes.Default ? 0 : modeDto.Amount,
-                    TemplateId = template.Id,
+                    TemplateId = template.Id
                 });
             }
 
-            if (await templateRepository.DeleteModesAsync(template.Modes.ToList()))
+            if (template.Modes.Count() > 0)
             {
-                return new Response(HttpStatusCode.OK, "Template Updating Failed");
+                if (!await templateRepository.DeleteModesAsync(template.Modes.ToList()))
+                    return new Response(HttpStatusCode.BadRequest, "Template Updating Failed");
+
             }
 
             template.Modes.Clear();
             template.Modes = newModes;
 
             if (await templateRepository.UpdateAsync(template))
-            {
                 return new Response(HttpStatusCode.OK, "Template Updated Successfully");
-            }
 
             return new Response(HttpStatusCode.BadRequest, "Template Updating Failed.");
         }
@@ -168,7 +167,7 @@ namespace Tabarru.Services.Implementation
             var template = await templateRepository.GetByIdAsync(id);
             if (template == null) return new Response(HttpStatusCode.BadRequest, "Template Details not found.");
 
-            if (await templateRepository.DeleteAsync(template))
+            if (await templateRepository.DeleteAsync(template.Id))
             {
                 return new Response(HttpStatusCode.OK, "Template Deleted Successfully");
             }

@@ -42,5 +42,12 @@ namespace Tabarru.Controllers
         {
             return await campaignService.UpdateStatusAsync(dto.MapToDto(TokenClaimHelper.GetId(User)));
         }
+
+        [HttpDelete("{id}")]
+        public async Task<Response> Delete(string id)
+        {
+            return await campaignService.DeleteCampaignAsync(id);
+
+        }
     }
 }

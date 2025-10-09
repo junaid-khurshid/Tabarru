@@ -12,5 +12,6 @@ namespace Tabarru.Repositories.IRepository
         Task<Campaign> GetByNameAndCharityIdAsync(string Name, string CharityId);
         Task<bool> UpdateAsync(Campaign campaign);
         Task<Campaign> GetByCampaignIdAndCharityIdOnlyAsync(string CampaignId, string CharityId);
+        Task<bool> DeleteAsync(Campaign campaign);
     }
 }

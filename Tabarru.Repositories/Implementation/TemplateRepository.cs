@@ -16,17 +16,24 @@ namespace Tabarru.Repositories.Implementation
 
         public async Task<Template> GetByIdAsync(string id)
         {
-            return await dbStorageContext.Templates.Where(t => t.Id.Equals(id))
-            .Include(t => t.Modes)
+            return await dbStorageContext.Templates.Where(t => t.Id.Equals(id) && !t.IsDeleted)
+            .Include(t => t.Modes.Where(x => !x.IsDeleted))
                 .ThenInclude(c => c.Campaign)
              .FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<Template>> GetAllTemplatesByCharityIdAsync(string CharityId) =>
-            await dbStorageContext.Templates.Where(x => x.CharityId.Equals(CharityId))
-                .Include(t => t.Modes)
+            await dbStorageContext.Templates.Where(x => x.CharityId.Equals(CharityId) && !x.IsDeleted)
+                .Include(t => t.Modes.Where(x => !x.IsDeleted))
                     .ThenInclude(c => c.Campaign)
                 .ToListAsync();
+
+        public async Task<Template> GetByIdForDeleteAsync(string id)
+        {
+            return await dbStorageContext.Templates
+                .Include(t => t.Modes)  // No filtering here
+                .FirstOrDefaultAsync(t => t.Id == id);
+        }
 
         public async Task<bool> AddAsync(Template template)
         {
@@ -40,8 +47,13 @@ namespace Tabarru.Repositories.Implementation
             return await dbStorageContext.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> DeleteAsync(Template template)
+        public async Task<bool> DeleteAsync(string templateId)
         {
+            var template = await GetByIdForDeleteAsync(templateId);
+
+            if (template == null)
+                return false;
+
             dbStorageContext.Templates.Remove(template);
             return await dbStorageContext.SaveChangesAsync() > 0;
         }
@@ -53,6 +65,6 @@ namespace Tabarru.Repositories.Implementation
         }
 
         public async Task<bool> ExistsWithCampaignAsync(string campaignId) =>
-        await dbStorageContext.Modes.AnyAsync(m => m.CampaignId == campaignId);
+        await dbStorageContext.Modes.AnyAsync(m => m.CampaignId == campaignId && !m.IsDeleted);
     }
 }

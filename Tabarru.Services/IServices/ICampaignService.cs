@@ -12,5 +12,7 @@ namespace Tabarru.Services.IServices
         Task<Response<CampaignReadDto>> GetByIdAsync(string id);
 
         Task<Response> UpdateStatusAsync(CampaignUpdateStatusDto dto);
+
+        Task<Response> DeleteCampaignAsync(string id);
     }
 }

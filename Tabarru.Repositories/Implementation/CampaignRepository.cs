@@ -37,7 +37,7 @@ namespace Tabarru.Repositories.Implementation
 
         public async Task<Campaign> GetByIdAsync(string Id)
             => await dbStorageContext.Campaigns.FirstOrDefaultAsync(c => c.Id == Id);
-        
+
         public async Task<bool> AnyByIdAsync(string Id)
             => await dbStorageContext.Campaigns.AnyAsync(c => c.Id == Id);
 
@@ -48,6 +48,12 @@ namespace Tabarru.Repositories.Implementation
         {
             dbStorageContext.Campaigns.Attach(campaign);
             dbStorageContext.Entry(campaign).State = EntityState.Modified;
+            return await dbStorageContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> DeleteAsync(Campaign campaign)
+        {
+            dbStorageContext.Campaigns.Remove(campaign);
             return await dbStorageContext.SaveChangesAsync() > 0;
         }
     }

@@ -14,12 +14,16 @@ namespace Tabarru.Services.Implementation
     {
         private readonly ICampaignRepository campaignRepository;
         private readonly DbStorageContext dbContext;
+        private readonly ITemplateRepository templateRepository;
 
         public CampaignService(ICampaignRepository campaignRepository,
-             DbStorageContext dbContext)
+             DbStorageContext dbContext,
+             ITemplateRepository templateRepository)
+
         {
             this.campaignRepository = campaignRepository;
             this.dbContext = dbContext;
+            this.templateRepository = templateRepository;
         }
 
         public async Task<Response> CreateAsync(CampaignDto dto)
@@ -114,6 +118,23 @@ namespace Tabarru.Services.Implementation
                 await transaction.RollbackAsync();
                 return new Response(HttpStatusCode.OK, "Campaign Updating Failed.");
             }
+        }
+
+        public async Task<Response> DeleteCampaignAsync(string id)
+        {
+            var campaign = await campaignRepository.GetByIdAsync(id);
+            if (campaign == null) return new Response(HttpStatusCode.BadRequest, "Campaign Details not found.");
+
+            if (await templateRepository.ExistsWithCampaignAsync(id))
+            {
+                return new Response(HttpStatusCode.BadRequest, $"Cannot delete campaign {id}, as its already used with Modes");
+            }
+
+            if (await campaignRepository.DeleteAsync(campaign))
+            {
+                return new Response(HttpStatusCode.OK, "Campaign Deleted Successfully");
+            }
+            return new Response(HttpStatusCode.BadRequest, "Campaign Deleting Failed.");
         }
     }
 }
