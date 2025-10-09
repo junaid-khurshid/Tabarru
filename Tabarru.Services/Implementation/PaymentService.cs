@@ -96,5 +96,10 @@ namespace Tabarru.Services.Implementation
             }
 
         }
+
+        public async Task<Response> PaymentRecurring(PaymentDetail paymentDetail)
+        {
+            return new Response(HttpStatusCode.OK);
+        }
     }
 }
