@@ -15,24 +15,31 @@ namespace Tabarru.Repositories.Implementation
         }
         public async Task<bool> AddAsync(Charity charity)
         {
-            dbStorageContext.Charity.Add(charity);
+            dbStorageContext.Charities.Add(charity);
             return await dbStorageContext.SaveChangesAsync() > 0;
         }
 
         public async Task<Charity> GetByEmailAsync(string email)
         {
-            return await dbStorageContext.Charity.FirstOrDefaultAsync(x => x.Email.Equals(email));
+            return await dbStorageContext.Charities.FirstOrDefaultAsync(x => x.Email.Equals(email));
         }
 
         public async Task<Charity> GetByIdAsync(string charityId)
         {
-            return await dbStorageContext.Charity.FindAsync(charityId);
+            return await dbStorageContext.Charities.FindAsync(charityId);
         }
 
         public async Task<bool> UpdateAsync(Charity charity)
         {
-            dbStorageContext.Charity.Update(charity);
+            dbStorageContext.Charities.Update(charity);
             return await dbStorageContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<Charity> GetCharityAllDetailsByIdAsync(string charityId)
+        {
+            return await dbStorageContext.Charities
+                .Include(c => c.CharityKycDetails)
+                .FirstOrDefaultAsync(x=> x.Id.Equals(charityId));
         }
     }
 }

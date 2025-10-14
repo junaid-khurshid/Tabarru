@@ -8,5 +8,6 @@ namespace Tabarru.Repositories.IRepository
         Task<Charity> GetByEmailAsync(string charityId);
         Task<bool> AddAsync(Charity charity);
         Task<bool> UpdateAsync(Charity charity);
+        Task<Charity> GetCharityAllDetailsByIdAsync(string charityId);
     }
 }

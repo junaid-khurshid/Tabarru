@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 using Tabarru.Repositories.Models;
 
 namespace Tabarru.Repositories.DatabaseContext
@@ -46,7 +45,7 @@ namespace Tabarru.Repositories.DatabaseContext
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
-        public DbSet<Charity> Charity { get; set; }
+        public DbSet<Charity> Charities { get; set; }
         public DbSet<CharityKycDetails> CharityKycDetails { get; set; }
         public DbSet<CharityKycDocuments> CharityKycDocuments { get; set; }
         public DbSet<EmailVerificationDetails> EmailVerificationDetails { get; set; }

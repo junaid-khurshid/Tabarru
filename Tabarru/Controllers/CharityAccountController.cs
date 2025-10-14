@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tabarru.Common.Helper;
 using Tabarru.Common.Models;
 using Tabarru.RequestModels;
+using Tabarru.Services.Implementation;
 using Tabarru.Services.IServices;
 using Tabarru.Services.Models;
 
@@ -48,26 +49,33 @@ namespace Tabarru.Controllers
         {
             return await charityAccountService.AssignPackageAsync(charityPackageUpdateRequest.MaptoDto(TokenClaimHelper.GetId(User)));
         }
+
+        [HttpGet("details")]
+        public async Task<Response<CharityReadDto>> GetCharityDetails()
+        {
+            return await charityAccountService.GetCharityDetailsAsync(TokenClaimHelper.GetId(User));
+        }
+
         /// <summary>
         ///  for testing purpose
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "ADMIN")]
-        [HttpGet("admin")]
-        public IActionResult AdminEndpoint()
-        {
-            return Ok("You are an admin.");
-        }
+        //[Authorize(Roles = "ADMIN")]
+        //[HttpGet("admin")]
+        //public IActionResult AdminEndpoint()
+        //{
+        //    return Ok("You are an admin.");
+        //}
 
-        [Authorize(Roles = "USER, ADMIN")]
-        [HttpGet("user")]
-        public IActionResult UserEndpoint()
-        {
-            var id = TokenClaimHelper.GetId(User);
-            var email = TokenClaimHelper.GetEmail(User);
-            var role = TokenClaimHelper.GetRole(User);
-            return Ok("You are a user.");
-        }
+        //[Authorize(Roles = "USER, ADMIN")]
+        //[HttpGet("user")]
+        //public IActionResult UserEndpoint()
+        //{
+        //    var id = TokenClaimHelper.GetId(User);
+        //    var email = TokenClaimHelper.GetEmail(User);
+        //    var role = TokenClaimHelper.GetRole(User);
+        //    return Ok("You are a user.");
+        //}
 
 
         [HttpPost("refresh")]

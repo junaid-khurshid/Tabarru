@@ -255,6 +255,13 @@ namespace Tabarru.Services.Implementation
             return new Response(HttpStatusCode.OK, $"Package '{package.Name}' assigned successfully");
         }
 
+        public async Task<Response<CharityReadDto>> GetCharityDetailsAsync(string ChairtyId)
+        {
+            var charities = await charityRepository.GetCharityAllDetailsByIdAsync(ChairtyId);
+
+            return new Response<CharityReadDto>(HttpStatusCode.OK, charities.MapToDto(), ResponseCode.Data);
+        }
+
         //public async Task<Response<LoginResponse>> GenerateRefreshToken(string token)
         //{
 

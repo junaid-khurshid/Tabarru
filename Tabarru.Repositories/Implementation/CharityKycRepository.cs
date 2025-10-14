@@ -17,7 +17,7 @@ namespace Tabarru.Repositories.Implementation
 
         public async Task<Charity> GetCharityByIdAsync(string charityId)
         {
-            return await dbStorageContext.Charity
+            return await dbStorageContext.Charities
                 .FirstOrDefaultAsync(c => c.Id == charityId);
         }
 
@@ -30,7 +30,7 @@ namespace Tabarru.Repositories.Implementation
 
         public async Task<IEnumerable<Charity>> GetAllCharitiesAsync()
         {
-            return await dbStorageContext.Charity
+            return await dbStorageContext.Charities
                 .Include(c => c.CharityKycDetails)
                 .ThenInclude(k => k.CharityKycDocuments)
                 .ToListAsync();
@@ -50,7 +50,7 @@ namespace Tabarru.Repositories.Implementation
 
         public async Task<CharityKycStatus> GetCharityKycStatus(string CharityId)
         {
-            return await dbStorageContext.Charity.Where(x => x.Id.Equals(CharityId)).Select(x => x.KycStatus).FirstOrDefaultAsync();
+            return await dbStorageContext.Charities.Where(x => x.Id.Equals(CharityId)).Select(x => x.KycStatus).FirstOrDefaultAsync();
         }
     }
 }

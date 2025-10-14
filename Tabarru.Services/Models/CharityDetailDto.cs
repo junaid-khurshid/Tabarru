@@ -56,7 +56,7 @@ namespace Tabarru.Services.Models
                     CharityName = k.CharityName,
                     CountryCode = k.CountryCode,
                     CharityNumber = k.CharityNumber,
-                    CharityKycDocuments = new CharityKycDocumentsReadDto
+                    CharityKycDocuments = k.CharityKycDocuments is null ? null : new CharityKycDocumentsReadDto
                     {
                         Id = k.CharityKycDocuments.Id,
                         Logo = k.CharityKycDocuments.Logo,
