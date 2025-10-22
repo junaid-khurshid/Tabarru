@@ -32,11 +32,11 @@ namespace Tabarru.Repositories.Implementation
 
         public async Task<IEnumerable<Campaign>> GetAllByCharityIdAsync(string CharityId)
         {
-            return await dbStorageContext.Campaigns.Where(x => x.CharityId.Equals(CharityId)).OrderByDescending(c => c.CreatedDate).ToListAsync();
+            return await dbStorageContext.Campaigns.Where(x => x.CharityId.Equals(CharityId) && !x.IsDeleted).OrderByDescending(c => c.CreatedDate).ToListAsync();
         }
 
         public async Task<Campaign> GetByIdAsync(string Id)
-            => await dbStorageContext.Campaigns.FirstOrDefaultAsync(c => c.Id == Id);
+            => await dbStorageContext.Campaigns.FirstOrDefaultAsync(c => c.Id == Id && !c.IsDeleted);
 
         public async Task<bool> AnyByIdAsync(string Id)
             => await dbStorageContext.Campaigns.AnyAsync(c => c.Id == Id);

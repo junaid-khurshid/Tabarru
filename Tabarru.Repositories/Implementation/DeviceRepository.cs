@@ -34,12 +34,12 @@ namespace Tabarru.Repositories.Implementation
 
         public async Task<IEnumerable<Device>> GetAllByCharityIdAsync(string charityId)
         {
-            return await dbStorageContext.Devices.Where(x => x.CharityId.Equals(charityId)).ToListAsync();
+            return await dbStorageContext.Devices.Where(x => x.CharityId.Equals(charityId) && !x.IsDeleted).ToListAsync();
         }
 
         public async Task<Device> GetByIdAsync(string id)
         {
-            return await dbStorageContext.Devices.FirstOrDefaultAsync(d => d.Id == id);
+            return await dbStorageContext.Devices.FirstOrDefaultAsync(d => d.Id == id && !d.IsDeleted);
         }
 
         public async Task<bool> AnyByIdAsync(string Id)

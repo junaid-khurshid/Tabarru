@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Tabarru.Common.Models;
 using Tabarru.RequestModels;
 using Tabarru.Services.IServices;
 
 namespace Tabarru.Controllers
 {
+    [Authorize(Policy = "KycApprovedOnly", Roles = "USER,ADMIN")]
     [Route("api/[controller]")]
     [ApiController]
     public class PaymentController : ControllerBase
