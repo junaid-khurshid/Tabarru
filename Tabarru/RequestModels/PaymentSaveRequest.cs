@@ -5,7 +5,7 @@ namespace Tabarru.RequestModels
 {
     public class PaymentSaveRequest
     {
-        public string PaymentId { get; set; }
+        public string TransactionId { get; set; }
         public decimal Amount { get; set; }
         public string Currency { get; set; }
         public PaymentStatus Status { get; set; }
@@ -15,8 +15,11 @@ namespace Tabarru.RequestModels
         public bool IsGiftAid { get; set; }
         public bool IsBankFeeCovered { get; set; }
         public bool IsRecurringPayment { get; set; }
+        public string Description { get; set; }
+        public string VendorType { get; set; }
         public string PaymentMethodId { get; set; }
-
+        public string TemplateId { get; set; }
+        public string CampaignId { get; set; }
         // GiftAid details
         public GiftAidRequest GiftAid { get; set; }
 
@@ -36,23 +39,28 @@ namespace Tabarru.RequestModels
 
     static class PaymentDetailExtension
     {
-        public static PaymentDto MapToDto(this PaymentSaveRequest userDetail)
+        public static PaymentDto MapToDto(this PaymentSaveRequest paymentSaveRequest, string CharityId)
         {
             return new PaymentDto
             {
-                PaymentId = userDetail.PaymentId,
-                Amount = userDetail.Amount,
-                AuthorizationCode = userDetail.AuthorizationCode,
-                Currency = userDetail.Currency,
-                CustomerId = userDetail.CustomerId,
-                IsBankFeeCovered = userDetail.IsBankFeeCovered,
-                IsGiftAid = userDetail.IsGiftAid,
-                IsRecurringPayment = userDetail.IsRecurringPayment,
-                NextRecurringDate = userDetail.NextRecurringDate,
-                PaymentDateTime = userDetail.PaymentDateTime,
-                PaymentMethodId = userDetail.PaymentMethodId,
-                Status = userDetail.Status,
-                GiftAid = userDetail.GiftAid.MapToDto()
+                TransactionId = paymentSaveRequest.TransactionId,
+                Amount = paymentSaveRequest.Amount,
+                AuthorizationCode = paymentSaveRequest.AuthorizationCode,
+                Currency = paymentSaveRequest.Currency,
+                CustomerId = paymentSaveRequest.CustomerId,
+                IsBankFeeCovered = paymentSaveRequest.IsBankFeeCovered,
+                IsGiftAid = paymentSaveRequest.IsGiftAid,
+                IsRecurringPayment = paymentSaveRequest.IsRecurringPayment,
+                NextRecurringDate = paymentSaveRequest.NextRecurringDate,
+                PaymentDateTime = paymentSaveRequest.PaymentDateTime,
+                PaymentMethodId = paymentSaveRequest.PaymentMethodId,
+                Status = paymentSaveRequest.Status,
+                CampaignId = paymentSaveRequest.CampaignId,
+                Description = paymentSaveRequest.Description,
+                TemplateId = paymentSaveRequest.TemplateId,
+                VendorType = paymentSaveRequest.VendorType,
+                GiftAid = paymentSaveRequest.GiftAid.MapToDto(),
+                CharityId = CharityId
             };
         }
 

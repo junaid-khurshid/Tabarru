@@ -14,7 +14,7 @@ namespace Tabarru.Repositories.Models
         public string PaymentDetailId { get; set; }
         public PaymentDetail PaymentDetail { get; set; }
 
-        public string PaymentId { get; set; }
+        public string TransactionId { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]
         public decimal Amount { get; set; }

@@ -35,7 +35,8 @@ namespace Tabarru.Services.Implementation
                 {
                     var paymentDetail = new PaymentDetail
                     {
-                        PaymentId = paymentDto.PaymentId,
+                        Id = Guid.NewGuid().ToString(),
+                        TransactionId = paymentDto.TransactionId,
                         Amount = paymentDto.Amount,
                         Currency = paymentDto.Currency,
                         Status = paymentDto.Status,
@@ -45,7 +46,12 @@ namespace Tabarru.Services.Implementation
                         IsGiftAid = paymentDto.IsGiftAid,
                         IsBankFeeCovered = paymentDto.IsBankFeeCovered,
                         IsRecurringPayment = paymentDto.IsRecurringPayment,
-                        PaymentMethodId = paymentDto.PaymentMethodId
+                        PaymentMethodId = paymentDto.PaymentMethodId,
+                        Description = paymentDto.Description,
+                        CharityId = paymentDto.CharityId,
+                        CampaignId = paymentDto.CampaignId,
+                        TemplateId = paymentDto.TemplateId,
+                        VendorType = paymentDto.VendorType,
                     };
 
                     await paymentRepository.AddAsync(paymentDetail);
@@ -72,7 +78,7 @@ namespace Tabarru.Services.Implementation
                         var recurring = new RecurringPaymentDetail
                         {
                             PaymentDetailId = paymentDetail.Id,
-                            PaymentId = paymentDto.PaymentId,
+                            TransactionId = paymentDto.TransactionId,
                             Amount = paymentDto.Amount,
                             Currency = paymentDto.Currency,
                             CustomerId = paymentDto.CustomerId,
@@ -100,6 +106,66 @@ namespace Tabarru.Services.Implementation
         public async Task<Response> PaymentRecurring(PaymentDetail paymentDetail)
         {
             return new Response(HttpStatusCode.OK);
+        }
+
+
+        public async Task<Response<List<PaymentReadDetailDto>>> GetByCharityIdAsync(string charityId)
+        {
+            var paymentDetails = (await paymentRepository.GetByCharityIdAsync(charityId)).ToList();
+
+            if (paymentDetails == null || paymentDetails.Count == 0)
+                return new Response<List<PaymentReadDetailDto>>(HttpStatusCode.NotFound, "No payment details found for this charity.");
+
+            var result = paymentDetails.Select(x => new PaymentReadDetailDto
+            {
+                Id = x.Id,
+                CharityId = x.CharityId,
+                CampaignId = x.CampaignId,
+                TemplateId = x.TemplateId,
+                TransactionId = x.TransactionId,
+                Status = x.Status.ToString(),
+                Amount = x.Amount,
+                Currency = x.Currency,
+                VendorType = x.VendorType,
+                PaymentDateTime = x.PaymentDateTime,
+                Description = x.Description,
+                IsGiftAid = x.IsGiftAid,
+                IsBankFeeCovered = x.IsBankFeeCovered,
+                IsRecurringPayment = x.IsRecurringPayment
+            }).ToList();
+
+            return new Response<List<PaymentReadDetailDto>>(HttpStatusCode.OK, result, Common.Enums.ResponseCode.Data);
+        }
+
+        public async Task<Response<List<PaymentReadDetailDto>>> GetByCampaignOrTemplateIdAsync(string? campaignId, string? templateId)
+        {
+            if (string.IsNullOrEmpty(campaignId) && string.IsNullOrEmpty(templateId))
+                return new Response<List<PaymentReadDetailDto>>(HttpStatusCode.BadRequest, "Either campaignId or templateId must be provided.");
+
+            var paymentDetails = (await paymentRepository.GetByCampaignOrTemplateIdAsync(campaignId, templateId)).ToList();
+
+            if (paymentDetails == null || paymentDetails.Count == 0)
+                return new Response<List<PaymentReadDetailDto>>(HttpStatusCode.NotFound, "No payment details found for given criteria.");
+
+            var result = paymentDetails.Select(x => new PaymentReadDetailDto
+            {
+                Id = x.Id,
+                CharityId = x.CharityId,
+                CampaignId = x.CampaignId,
+                TemplateId = x.TemplateId,
+                TransactionId = x.TransactionId,
+                Status = x.Status.ToString(),
+                Amount = x.Amount,
+                Currency = x.Currency,
+                VendorType = x.VendorType,
+                PaymentDateTime = x.PaymentDateTime,
+                Description = x.Description,
+                IsGiftAid = x.IsGiftAid,
+                IsBankFeeCovered = x.IsBankFeeCovered,
+                IsRecurringPayment = x.IsRecurringPayment
+            }).ToList();
+
+            return new Response<List<PaymentReadDetailDto>>(HttpStatusCode.OK, result, Common.Enums.ResponseCode.Data);
         }
     }
 }

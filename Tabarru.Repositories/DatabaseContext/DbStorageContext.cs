@@ -43,6 +43,10 @@ namespace Tabarru.Repositories.DatabaseContext
                 .WithMany()
                 .HasForeignKey(m => m.CampaignId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<PaymentDetail>()
+                .Property(p => p.Id)
+                .ValueGeneratedNever();
         }
 
         public DbSet<Charity> Charities { get; set; }

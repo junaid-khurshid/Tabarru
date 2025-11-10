@@ -9,11 +9,12 @@ namespace Tabarru.Repositories.Models
         [Key]
         public string Id { get; set; }
 
-        [Required]
+        public string CharityId { get; set; }
         public string CampaignId { get; set; }
+        public string TemplateId { get; set; }
 
         [Required]
-        public string PaymentId { get; set; }
+        public string TransactionId { get; set; }
 
         [Required]
         public PaymentStatus Status { get; set; }
@@ -24,6 +25,7 @@ namespace Tabarru.Repositories.Models
 
         [Required]
         public string Currency { get; set; }
+        public string VendorType { get; set; }
 
         public DateTime PaymentDateTime { get; set; }
         public string CustomerId { get; set; }

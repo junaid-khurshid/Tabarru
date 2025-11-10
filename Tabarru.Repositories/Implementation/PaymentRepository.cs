@@ -24,6 +24,21 @@ namespace Tabarru.Repositories.Implementation
             return await dbStorageContext.PaymentDetails.FirstOrDefaultAsync(x => x.Id.Equals(PaymentId));
         }
 
+        public async Task<IEnumerable<PaymentDetail>> GetByCharityIdAsync(string charityId)
+        {
+            return await dbStorageContext.PaymentDetails
+                .Where(p => p.CharityId == charityId && !p.IsDeleted)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<PaymentDetail>> GetByCampaignOrTemplateIdAsync(string? campaignId, string? templateId)
+        {
+            return await dbStorageContext.PaymentDetails
+                .Where(p => !p.IsDeleted &&
+                            (p.CampaignId == campaignId || p.TemplateId == templateId))
+                .ToListAsync();
+        }
+
         public async Task<bool> UpdateAsync(PaymentDetail paymentDetail)
         {
             dbStorageContext.PaymentDetails.Update(paymentDetail);
