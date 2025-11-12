@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Azure.Core;
+using System.Net;
 using Tabarru.Common.Models;
 using Tabarru.Repositories.DatabaseContext;
 using Tabarru.Repositories.IRepository;
@@ -13,21 +14,35 @@ namespace Tabarru.Services.Implementation
         private readonly IPaymentRepository paymentRepository;
         private readonly IRecurringPaymentRepository recurringPaymentRepository;
         private readonly IGiftAidRepository giftAidRepository;
+        private readonly ITemplateRepository templateRepository;
+        private readonly ICampaignRepository campaignRepository;
         private readonly DbStorageContext dbContext;
 
         public PaymentService(IPaymentRepository paymentRepository,
             IRecurringPaymentRepository recurringPaymentRepository,
             IGiftAidRepository giftAidRepository,
+            ITemplateRepository templateRepository,
+            ICampaignRepository campaignRepository,
              DbStorageContext dbContext)
         {
             this.paymentRepository = paymentRepository;
             this.recurringPaymentRepository = recurringPaymentRepository;
             this.giftAidRepository = giftAidRepository;
+            this.templateRepository = templateRepository;
+            this.campaignRepository = campaignRepository;
             this.dbContext = dbContext;
         }
 
         public async Task<Response> SavePayment(PaymentDto paymentDto)
         {
+
+            var template = await templateRepository.GetByIdAsync(paymentDto.TemplateId);
+            if (template == null)
+                return new Response(HttpStatusCode.NotFound, "Template details not found");
+
+            var campaign = await campaignRepository.GetByIdAsync(paymentDto.CampaignId);
+            if (campaign == null)
+                return new Response(HttpStatusCode.BadRequest, "Campaign Details not found.");
 
             using (var transaction = await dbContext.Database.BeginTransactionAsync())
             {
