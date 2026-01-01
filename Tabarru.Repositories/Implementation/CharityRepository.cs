@@ -39,7 +39,8 @@ namespace Tabarru.Repositories.Implementation
         {
             return await dbStorageContext.Charities
                 .Include(c => c.CharityKycDetails)
-                .FirstOrDefaultAsync(x=> x.Id.Equals(charityId));
+                .ThenInclude(k => k.CharityKycDocuments)
+                .FirstOrDefaultAsync(x => x.Id.Equals(charityId));
         }
     }
 }

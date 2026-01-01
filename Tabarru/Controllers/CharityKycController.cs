@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using Tabarru.Common.Helper;
 using Tabarru.Common.Models;
 using Tabarru.RequestModels;
@@ -27,6 +28,15 @@ namespace Tabarru.Controllers
             return await _kycService.SubmitKycAsync(TokenClaimHelper.GetId(User), dto.MapToDto());
         }
 
+        [HttpPost("upload")]
+        public async Task<Response<string>> Upload([FromForm] UploadFileRequest uploadFileRequest)
+        {
+            if (uploadFileRequest.File == null)
+                return new Response<string>(HttpStatusCode.BadRequest, "File is required");
+
+            return await _kycService.UploadAsync(uploadFileRequest.File, uploadFileRequest.FileName, TokenClaimHelper.GetId(User));
+        }
+
 
         [HttpGet("admin/all")]
         public async Task<Response<IList<CharityReadDto>>> GetAllCharities()
@@ -38,6 +48,12 @@ namespace Tabarru.Controllers
         public async Task<Response> UpdateKycStatus([FromBody] AdminKycUpdateDto dto)
         {
             return await _kycService.UpdateKycStatusAsync(dto);
+        }
+
+        [HttpGet("kycImage")]
+        public async Task<Response<string>> GetKycImage([FromQuery] string path)
+        {
+            return await _kycService.GetKycImageAsync(path);
         }
     }
 }

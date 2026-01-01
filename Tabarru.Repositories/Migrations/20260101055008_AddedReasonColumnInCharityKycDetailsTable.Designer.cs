@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tabarru.Repositories.DatabaseContext;
 
@@ -11,9 +12,11 @@ using Tabarru.Repositories.DatabaseContext;
 namespace Tabarru.Repositories.Migrations
 {
     [DbContext(typeof(DbStorageContext))]
-    partial class DbStorageContextModelSnapshot : ModelSnapshot
+    [Migration("20260101055008_AddedReasonColumnInCharityKycDetailsTable")]
+    partial class AddedReasonColumnInCharityKycDetailsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,6 +167,7 @@ namespace Tabarru.Repositories.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("KycRejectionReason")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
@@ -191,6 +195,7 @@ namespace Tabarru.Repositories.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BankStatement")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CharityKycDetailsId")
@@ -212,12 +217,14 @@ namespace Tabarru.Repositories.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TaxExemptionCertificate")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("UpdatedDate")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("UtilityBill")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

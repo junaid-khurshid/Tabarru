@@ -17,6 +17,8 @@ namespace Tabarru.Repositories.Models
         [Required]
         public CharityKycStatus Status { get; set; }
 
+        public string? KycRejectionReason { get; set; }
+
         [Required]
         public bool IsCharityDocumentUploaded { get; set; }
 

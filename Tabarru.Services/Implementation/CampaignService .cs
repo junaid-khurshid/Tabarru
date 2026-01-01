@@ -43,7 +43,6 @@ namespace Tabarru.Services.Implementation
                     await campaignRepository.UpdateAsync(currentDefault);
                 }
             }
-            Console.WriteLine($"Campaign Details : {dto.Name}, {dto.ListOfAmounts}");
 
             var campaign = new Campaign
             {
@@ -63,6 +62,46 @@ namespace Tabarru.Services.Implementation
             }
 
             return new Response(HttpStatusCode.Created, "Campaign Creation Successfully.");
+        }
+
+        public async Task<Response> UpdateAsync(CampaignDto dto)
+        {
+            var campaign = await campaignRepository.GetByIdAsync(dto.Id);
+            if (campaign == null)
+                return new Response(HttpStatusCode.NotFound, "Campaign not found.");
+
+            var existing = await campaignRepository.GetByNameAndCharityIdAsync(dto.Name, dto.CharityId);
+            if (existing != null && existing.Id != dto.Id)
+                return new Response(HttpStatusCode.BadRequest, "A campaign with the same name already exists.");
+
+            if (dto.IsDefault)
+            {
+                var currentDefault = await campaignRepository.GetAllByCharityIdAndDefaultOneOnlyAsync(dto.CharityId);
+                if (currentDefault != null && currentDefault.Id != dto.Id)
+                {
+                    currentDefault.IsDefault = false;
+                    await campaignRepository.UpdateAsync(currentDefault);
+                }
+            }
+
+            campaign.Name = dto.Name.Trim();
+            campaign.ListOfAmounts = dto.ListOfAmounts;
+            campaign.IsEnabled = dto.IsEnabled;
+            campaign.IsDefault = dto.IsDefault;
+
+            if (dto.Icon != null)
+            {
+                campaign.Icon = await dto.Icon.ConvertFileToBase64Async();
+            }
+
+            var updated = await campaignRepository.UpdateAsync(campaign);
+
+            if (!updated)
+            {
+                return new Response(HttpStatusCode.BadRequest, "Campaign Update Failed.");
+            }
+
+            return new Response(HttpStatusCode.OK, "Campaign Updated Successfully.");
         }
 
         public async Task<Response<IList<CampaignReadDto>>> GetAllByCharityIDAsync(string CharityId)

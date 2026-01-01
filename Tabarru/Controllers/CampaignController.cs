@@ -25,6 +25,12 @@ namespace Tabarru.Controllers
             return await campaignService.CreateAsync(campaignCreateRequest.MapToDto(TokenClaimHelper.GetId(User)));
         }
 
+        [HttpPut]
+        public async Task<Response> Update([FromForm] CampaignUpdateRequest request)
+        {
+            return await campaignService.UpdateAsync(request.MapToDto(TokenClaimHelper.GetId(User)));
+        }
+
         [HttpGet("{id:guid}")]
         public async Task<Response<CampaignReadDto>> GetById(Guid id)
         {

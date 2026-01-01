@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Amazon;
+using Amazon.Runtime;
+using Amazon.S3;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
@@ -10,6 +14,7 @@ using Tabarru.Repositories.DatabaseContext;
 using Tabarru.Repositories.Implementation;
 using Tabarru.Repositories.IRepository;
 using Tabarru.Repositories.Models;
+using Tabarru.RequestModels;
 using Tabarru.Services.Implementation;
 using Tabarru.Services.IServices;
 
@@ -37,6 +42,7 @@ namespace Tabarru
             builder.Services.AddScoped<IDeviceService, DeviceService>();
             builder.Services.AddScoped<ICharityKycService, CharityKycService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<IFileStoringService, FileStoringService>();
 
             // Repository
             builder.Services.AddTransient<ICharityRepository, CharityRepository>();
@@ -52,6 +58,28 @@ namespace Tabarru
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSingleton<IAuthorizationHandler, ValidateKycStatusPolicy>();
+
+            // AWS S3
+            builder.Services.Configure<AwsSettings>(
+                builder.Configuration.GetSection("AWS")
+            );
+
+            builder.Services.AddSingleton<IAmazonS3>(sp =>
+            {
+                var aws = sp.GetRequiredService<IOptions<AwsSettings>>().Value;
+
+                var credentials = new BasicAWSCredentials(
+                    aws.AccessKey,
+                    aws.SecretKey
+                );
+
+                var config = new AmazonS3Config
+                {
+                    RegionEndpoint = RegionEndpoint.GetBySystemName(aws.Region)
+                };
+
+                return new AmazonS3Client(credentials, config);
+            });
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -137,7 +165,7 @@ namespace Tabarru
                         Console.WriteLine("[DB Init] Database not found — creating...");
                         await db.Database.EnsureCreatedAsync();
                     }
-                    
+
                     Console.WriteLine("Checking DB for Package Details");
 
                     if (!db.Set<PackageDetails>().Any())

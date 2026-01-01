@@ -7,6 +7,8 @@ namespace Tabarru.Services.IServices
     {
         Task<Response> CreateAsync(CampaignDto dto);
 
+        Task<Response> UpdateAsync(CampaignDto dto);
+
         Task<Response<IList<CampaignReadDto>>> GetAllByCharityIDAsync(string CharityId);
 
         Task<Response<CampaignReadDto>> GetByIdAsync(string id);

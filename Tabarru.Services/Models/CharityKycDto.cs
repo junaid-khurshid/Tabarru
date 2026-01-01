@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Tabarru.Services.Models
+﻿namespace Tabarru.Services.Models
 {
     public class CharityKycDto
     {
@@ -11,11 +9,11 @@ namespace Tabarru.Services.Models
         public string CharityNumber { get; set; }
 
         // Documents
-        public IFormFile Logo { get; set; }
-        public IFormFile IncorporationCertificate { get; set; }
-        public IFormFile? UtilityBill { get; set; }
-        public IFormFile? TaxExemptionCertificate { get; set; }
-        public IFormFile? BankStatement { get; set; }
+        public string Logo { get; set; }
+        public string IncorporationCertificate { get; set; }
+        public string UtilityBill { get; set; }
+        public string TaxExemptionCertificate { get; set; }
+        public string BankStatement { get; set; }
     }
 
     public class CharityKycDetailsReadDto

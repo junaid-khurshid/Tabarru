@@ -6,5 +6,6 @@ namespace Tabarru.Services.Models
     {
         public string CharityId { get; set; }
         public CharityKycStatus Status { get; set; }
+        public string Reason { get; set; }
     }
 }

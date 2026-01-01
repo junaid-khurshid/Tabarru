@@ -18,12 +18,13 @@ namespace Tabarru.RequestModels
 
         // Documents
         [Required(ErrorMessage = "REQUIRED")]
-        public IFormFile Logo { get; set; }
+        public string Logo { get; set; }
         [Required(ErrorMessage = "REQUIRED")]
-        public IFormFile IncorporationCertificate { get; set; }
-        public IFormFile? UtilityBill { get; set; }
-        public IFormFile? TaxExemptionCertificate { get; set; }
-        public IFormFile? BankStatement { get; set; }
+        public string IncorporationCertificate { get; set; }
+        // OPTIONAL documents
+        public string? UtilityBill { get; set; }
+        public string? TaxExemptionCertificate { get; set; }
+        public string? BankStatement { get; set; }
     }
 
 

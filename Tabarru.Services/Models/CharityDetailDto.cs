@@ -49,6 +49,7 @@ namespace Tabarru.Services.Models
                 CharityKycDetails = charity.CharityKycDetails.Select(k => new CharityKycDetailsReadDto
                 {
                     Id = k.Id,
+                    CharityId =  charity.Id,
                     Status = k.Status.ToString(),
                     IsCharityDocumentUploaded = k.IsCharityDocumentUploaded,
                     FirstName = k.FirstName,

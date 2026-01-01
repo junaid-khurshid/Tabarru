@@ -168,10 +168,10 @@ namespace Tabarru.Services.Implementation
         {
             Console.WriteLine($" directory : {Directory.GetCurrentDirectory()}");
 
-            string htmlPath1 = Path.Combine(Directory.GetCurrentDirectory(), "Tabarru.Common", "HtmlTemplates", "EmailVerificationBody.html");
+            //string htmlPath1 = Path.Combine(Directory.GetCurrentDirectory(), "Tabarru.Common", "HtmlTemplates", "EmailVerificationBody.html");
             string htmlPath = Path.Combine(AppContext.BaseDirectory, "HtmlTemplates", "EmailVerificationBody.html");
 
-            Console.WriteLine($" html path 1 : {htmlPath1}");
+            //Console.WriteLine($" html path 1 : {htmlPath1}");
             Console.WriteLine($" html path : {htmlPath}");
 
             if (!File.Exists(htmlPath))
@@ -257,9 +257,12 @@ namespace Tabarru.Services.Implementation
 
         public async Task<Response<CharityReadDto>> GetCharityDetailsAsync(string ChairtyId)
         {
-            var charities = await charityRepository.GetCharityAllDetailsByIdAsync(ChairtyId);
-
-            return new Response<CharityReadDto>(HttpStatusCode.OK, charities.MapToDto(), ResponseCode.Data);
+            var charity = await charityRepository.GetCharityAllDetailsByIdAsync(ChairtyId);
+            if (charity is null)
+            {
+                return new Response<CharityReadDto>(HttpStatusCode.OK,"Charity Not Found");
+            }
+            return new Response<CharityReadDto>(HttpStatusCode.OK, charity.MapToDto(), ResponseCode.Data);
         }
 
         //public async Task<Response<LoginResponse>> GenerateRefreshToken(string token)

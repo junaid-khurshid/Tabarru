@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>KYC Status Update</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            background-color: #ffffff;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .status-box {
+            background-color: #f0f0f0;
+            padding: 16px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin: 25px 0;
+            border-radius: 6px;
+            color: #333333;
+        }
+
+        .reason-box {
+            background-color: #fff4f4;
+            padding: 15px;
+            border-left: 4px solid #e74c3c;
+            margin-top: 20px;
+            border-radius: 4px;
+            color: #555555;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #777777;
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>KYC Status Update</h2>
+
+        <p>Hello,</p>
+
+        <p>
+            We have reviewed your KYC submission. Below is the current status of your verification:
+        </p>
+
+        <div class="status-box">
+            {{KYC_STATUS}} <!-- e.g. Approved / Rejected / Pending -->
+        </div>
+
+        <div class="reason-box" style="{{REASON_DISPLAY}}">
+            <strong>Reason:</strong><br />
+            {{REJECTION_REASON}}
+        </div>
+
+        <p>
+            If you have any questions or need to resubmit your documents, please contact our support team.
+        </p>
+
+        <div class="footer">
+            &copy; 2026 Your Company. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

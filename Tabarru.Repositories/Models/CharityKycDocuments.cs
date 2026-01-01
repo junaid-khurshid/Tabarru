@@ -18,10 +18,8 @@ namespace Tabarru.Repositories.Models
         [Required]
         public string IncorporationCertificate { get; set; }
 
-        public string UtilityBill { get; set; }
-
-        public string TaxExemptionCertificate { get; set; }
-
-        public string BankStatement { get; set; }
+        public string? UtilityBill { get; set; }
+        public string? TaxExemptionCertificate { get; set; }
+        public string? BankStatement { get; set; }
     }
 }
