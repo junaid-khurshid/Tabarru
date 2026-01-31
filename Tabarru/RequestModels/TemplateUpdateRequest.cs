@@ -14,7 +14,7 @@ namespace Tabarru.RequestModels
         [Required]
         public string Name { get; set; }
 
-        [ValidateFile(5, 2000)]
+        //[ValidateFile(5, 2000)]
         public IFormFile Icon { get; set; }
         public string Message { get; set; }
 
