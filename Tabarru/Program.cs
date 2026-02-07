@@ -156,18 +156,20 @@ namespace Tabarru
                     {
                         Console.WriteLine("[DB Init] Database connection successful");
 
-                        // Apply any pending migrations automatically
+                        // Apply migrations — this creates the __EFMigrationsHistory table
                         await db.Database.MigrateAsync();
                         Console.WriteLine("[DB Init] Migrations applied ✅");
                     }
                     else
                     {
                         Console.WriteLine("[DB Init] Database not found — creating...");
-                        await db.Database.EnsureCreatedAsync();
+                        // Only create database without skipping migrations
+                        await db.Database.MigrateAsync();
+                        Console.WriteLine("[DB Init] Database created and migrations applied ✅");
                     }
 
+                    // Insert default PackageDetails if empty
                     Console.WriteLine("Checking DB for Package Details");
-
                     if (!db.Set<PackageDetails>().Any())
                     {
                         Console.WriteLine("Inserting Data in Package Details");

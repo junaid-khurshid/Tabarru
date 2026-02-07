@@ -21,6 +21,15 @@ namespace Tabarru.Repositories.Implementation
                 .FirstOrDefaultAsync(c => c.Id == charityId);
         }
 
+        public async Task<CharityKycDetails?> GetActiveByCharityIdAsync(string charityId)
+        {
+            return await dbStorageContext.CharityKycDetails
+                .Include(k => k.CharityKycDocuments)
+                .FirstOrDefaultAsync(x =>
+                    x.CharityId == charityId &&
+                    !x.IsDeleted);
+        }
+
         public async Task<CharityKycDetails> GetCharityKycDetailsByCharityIdAsync(string charityId)
         {
             return await dbStorageContext.CharityKycDetails
@@ -51,6 +60,18 @@ namespace Tabarru.Repositories.Implementation
         public async Task<CharityKycStatus> GetCharityKycStatus(string CharityId)
         {
             return await dbStorageContext.Charities.Where(x => x.Id.Equals(CharityId)).Select(x => x.KycStatus).FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> DeleteAsync(CharityKycDetails charityKycDetails)
+        {
+            dbStorageContext.CharityKycDetails.Remove(charityKycDetails);
+            return await dbStorageContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> DeleteKycDocumentAsync(CharityKycDocuments charityKycDocuments)
+        {
+            dbStorageContext.CharityKycDocuments.Remove(charityKycDocuments);
+            return await dbStorageContext.SaveChangesAsync() > 0;
         }
     }
 }

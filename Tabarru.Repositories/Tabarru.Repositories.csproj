@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Tabarru.Common\Tabarru.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

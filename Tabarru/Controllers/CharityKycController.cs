@@ -28,6 +28,12 @@ namespace Tabarru.Controllers
             return await _kycService.SubmitKycAsync(TokenClaimHelper.GetId(User), dto.MapToDto());
         }
 
+        [HttpPut("re-submit")]
+        public async Task<Response> UpdateKyc([FromForm] CharityKycSubmitRequest dto)
+        {
+            return await _kycService.SubmitKycAsync(TokenClaimHelper.GetId(User), dto.MapToDto());
+        }
+
         [HttpPost("upload")]
         public async Task<Response<string>> Upload([FromForm] UploadFileRequest uploadFileRequest)
         {

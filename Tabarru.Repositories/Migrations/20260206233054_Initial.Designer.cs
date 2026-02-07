@@ -12,8 +12,8 @@ using Tabarru.Repositories.DatabaseContext;
 namespace Tabarru.Repositories.Migrations
 {
     [DbContext(typeof(DbStorageContext))]
-    [Migration("20260101142407_MakeKycOptionalFieldsNullable")]
-    partial class MakeKycOptionalFieldsNullable
+    [Migration("20260206233054_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

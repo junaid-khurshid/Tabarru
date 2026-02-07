@@ -2,6 +2,7 @@
 using System.Net;
 using Tabarru.Common.Enums;
 using Tabarru.Common.Models;
+using Tabarru.Repositories.DatabaseContext;
 using Tabarru.Repositories.IRepository;
 using Tabarru.Repositories.Models;
 using Tabarru.Services.IServices;
@@ -15,57 +16,97 @@ namespace Tabarru.Services.Implementation
         private readonly ICharityRepository charityRepository;
         private readonly IEmailMessageService emailMessageService;
         private readonly IFileStoringService fileStoringService;
+        private readonly DbStorageContext dbContext;
 
         public CharityKycService(ICharityKycRepository charityKycRepository,
             ICharityRepository charityRepository,
             IEmailMessageService emailMessageService,
-            IFileStoringService fileStoringService)
+            IFileStoringService fileStoringService,
+            DbStorageContext dbContext)
         {
             this.charityKycRepository = charityKycRepository;
             this.charityRepository = charityRepository;
             this.emailMessageService = emailMessageService;
             this.fileStoringService = fileStoringService;
+            this.dbContext = dbContext;
         }
 
         public async Task<Response> SubmitKycAsync(string charityId, CharityKycDto dto)
         {
-            var charity = await charityKycRepository.GetCharityByIdAsync(charityId);
-            if (charity == null)
-                return new Response(HttpStatusCode.NotFound, "Charity not found");
+            await using var transaction = await dbContext.Database.BeginTransactionAsync();
 
-            var kycDetails = new CharityKycDetails
+            try
             {
-                CharityId = charityId,
-                Status = CharityKycStatus.Pending,
-                IsCharityDocumentUploaded = dto.IncorporationCertificate is { Length: > 0 },
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                CharityName = dto.CharityName,
-                CountryCode = dto.CountryCode,
-                CharityNumber = dto.CharityNumber,
-                CharityKycDocuments = new CharityKycDocuments
+                var charity = await charityRepository.GetByIdAsync(charityId);
+                if (charity == null)
+                    return new Response(HttpStatusCode.NotFound, "Charity not found");
+
+                //Get existing active KYC, pending, 
+                var existingKyc = await charityKycRepository.GetActiveByCharityIdAsync(charityId);
+
+                if (existingKyc != null && existingKyc.Status == CharityKycStatus.Approved)
                 {
-                    Logo = dto.Logo,
-                    IncorporationCertificate = dto.IncorporationCertificate,
-                    UtilityBill = dto.UtilityBill,
-                    TaxExemptionCertificate = dto.TaxExemptionCertificate,
-                    BankStatement = dto.BankStatement,
+                    return new Response(HttpStatusCode.BadRequest, "Charity KYC cannot submit, KYC is Approved .");
                 }
-            };
 
+                if (existingKyc != null)
+                {
+                    //delete old KYC
+                    var kycDeleted = await charityKycRepository.DeleteAsync(existingKyc);
 
-            charity.KycStatus = CharityKycStatus.Pending;
-            charity.IsKycVerified = false;
+                    if (kycDeleted)
+                    {
+                        var kycDocumentDeleted = await charityKycRepository.DeleteKycDocumentAsync(existingKyc.CharityKycDocuments);
+                    }
+                }
 
-            var charityUdpate = await charityRepository.UpdateAsync(charity);
-            var added = await charityKycRepository.AddAsync(kycDetails);
+                //Create new KYC
+                var newKyc = new CharityKycDetails
+                {
+                    CharityId = charityId,
+                    Status = CharityKycStatus.Pending,
+                    IsCharityDocumentUploaded =
+                        !string.IsNullOrWhiteSpace(dto.IncorporationCertificate),
 
-            if (!charityUdpate || !added)
-            {
-                return new Response(HttpStatusCode.BadRequest, "Charity KYC submission failed.");
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    CharityName = dto.CharityName,
+                    CountryCode = dto.CountryCode,
+                    CharityNumber = dto.CharityNumber,
+                    CharityKycDocuments = new CharityKycDocuments
+                    {
+                        Logo = dto.Logo,
+                        IncorporationCertificate = dto.IncorporationCertificate,
+                        UtilityBill = dto.UtilityBill,
+                        TaxExemptionCertificate = dto.TaxExemptionCertificate,
+                        BankStatement = dto.BankStatement
+                    }
+                };
+
+                charity.KycStatus = CharityKycStatus.Pending;
+                charity.IsKycVerified = false;
+
+                await charityRepository.UpdateAsync(charity);
+                await charityKycRepository.AddAsync(newKyc);
+
+                //Commit transaction
+                await transaction.CommitAsync();
+
+                return new Response(
+                    HttpStatusCode.OK,
+                    existingKyc == null
+                        ? "Charity KYC submitted successfully"
+                        : "Charity KYC resubmitted successfully"
+                );
             }
-
-            return new Response(HttpStatusCode.OK, "Charity KYC submitted successfully");
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return new Response(
+                    HttpStatusCode.InternalServerError,
+                    "An error occurred while submitting KYC"
+                );
+            }
         }
 
         public async Task<Response<string>> UploadAsync(IFormFile file, string fileName, string charityId)

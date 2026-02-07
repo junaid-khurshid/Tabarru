@@ -23,7 +23,8 @@ namespace Tabarru.Repositories.Migrations
                     IsEnabled = table.Column<bool>(type: "bit", nullable: false),
                     IsDefault = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,7 +32,7 @@ namespace Tabarru.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Charity",
+                name: "Charities",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -47,11 +48,12 @@ namespace Tabarru.Repositories.Migrations
                     RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RefreshTokenExpiryTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Charity", x => x.Id);
+                    table.PrimaryKey("PK_Charities", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -65,7 +67,8 @@ namespace Tabarru.Repositories.Migrations
                     ExpiryTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsUsed = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -94,11 +97,14 @@ namespace Tabarru.Repositories.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CharityId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CampaignId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PaymentId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TemplateId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TransactionId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VendorType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PaymentDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CustomerId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AuthorizationCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -108,7 +114,8 @@ namespace Tabarru.Repositories.Migrations
                     IsBankFeeCovered = table.Column<bool>(type: "bit", nullable: false),
                     IsRecurringPayment = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -125,7 +132,8 @@ namespace Tabarru.Repositories.Migrations
                     Icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -139,6 +147,7 @@ namespace Tabarru.Repositories.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CharityId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    KycRejectionReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsCharityDocumentUploaded = table.Column<bool>(type: "bit", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
@@ -146,15 +155,16 @@ namespace Tabarru.Repositories.Migrations
                     CountryCode = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     CharityNumber = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CharityKycDetails", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CharityKycDetails_Charity_CharityId",
+                        name: "FK_CharityKycDetails_Charities_CharityId",
                         column: x => x.CharityId,
-                        principalTable: "Charity",
+                        principalTable: "Charities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -173,7 +183,8 @@ namespace Tabarru.Repositories.Migrations
                     Postcode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -193,7 +204,7 @@ namespace Tabarru.Repositories.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PaymentDetailId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PaymentId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TransactionId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PaymentMethodInfo = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -201,7 +212,8 @@ namespace Tabarru.Repositories.Migrations
                     AuthorizationCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NextRecurringDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -224,7 +236,8 @@ namespace Tabarru.Repositories.Migrations
                     TemplateId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     DeviceLocation = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -247,7 +260,8 @@ namespace Tabarru.Repositories.Migrations
                     TemplateId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -274,11 +288,12 @@ namespace Tabarru.Repositories.Migrations
                     CharityKycDetailsId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IncorporationCertificate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UtilityBill = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TaxExemptionCertificate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BankStatement = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UtilityBill = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TaxExemptionCertificate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BankStatement = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -365,7 +380,7 @@ namespace Tabarru.Repositories.Migrations
                 name: "PaymentDetails");
 
             migrationBuilder.DropTable(
-                name: "Charity");
+                name: "Charities");
         }
     }
 }
