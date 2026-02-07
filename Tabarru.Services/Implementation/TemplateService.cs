@@ -91,20 +91,20 @@ namespace Tabarru.Services.Implementation
                     return new Response(HttpStatusCode.BadRequest, $"Campaign with {mode.CampaignId} not found");
                 }
 
-                if (await templateRepository.ExistsWithCampaignAsync(mode.CampaignId))
+                //if (await templateRepository.ExistsWithCampaignAsync(mode.CampaignId))
+                //{
+                //    return new Response(HttpStatusCode.BadRequest, "Campaign already used in another template or mode.");
+                //}
+                //else
+                //{
+                template.Modes.Add(new Mode
                 {
-                    return new Response(HttpStatusCode.BadRequest, "Campaign already used in another template or mode.");
-                }
-                else
-                {
-                    template.Modes.Add(new Mode
-                    {
-                        ModeType = mode.ModeType,
-                        Amount = mode.ModeType == Modes.Default ? 0 : mode.Amount,
-                        CampaignId = mode.CampaignId,
-                        TemplateId = template.Id,
-                    });
-                }
+                    ModeType = mode.ModeType,
+                    Amount = mode.ModeType == Modes.Default ? 0 : mode.Amount,
+                    CampaignId = mode.CampaignId,
+                    TemplateId = template.Id,
+                });
+                //}
             }
 
             if (await templateRepository.AddAsync(template))
