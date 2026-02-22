@@ -1,4 +1,5 @@
-﻿using Tabarru.Repositories.Models;
+﻿using Tabarru.Common.Models;
+using Tabarru.Repositories.Models;
 
 namespace Tabarru.Repositories.IRepository
 {
@@ -10,5 +11,11 @@ namespace Tabarru.Repositories.IRepository
 
         Task<IEnumerable<PaymentDetail>> GetByCharityIdAsync(string charityId);
         Task<IEnumerable<PaymentDetail>> GetByCampaignOrTemplateIdAsync(string? campaignId, string? templateId);
+        //Task<List<CampaignDonationSummary>> GetTodayCampaignSummary();
+        //Task<DonationSummary> GetDonationSummary();
+
+        Task<GiftAidSmallDonationsScheme> GetGiftAidSummary(DateTime? start, DateTime? end, string charityId);
+        Task<List<CampaignDonationSummary>> GetCampaignGraphList(DateTime? start, DateTime? end, string charityId);
+        Task<RevenueDashboardGraphResponse> GetRevenueGraphList(DateTime? start, DateTime? end, string charityId);
     }
 }

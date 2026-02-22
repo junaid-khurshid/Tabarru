@@ -43,6 +43,7 @@ namespace Tabarru
             builder.Services.AddScoped<ICharityKycService, CharityKycService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IFileStoringService, FileStoringService>();
+            builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
             // Repository
             builder.Services.AddTransient<ICharityRepository, CharityRepository>();
@@ -137,6 +138,8 @@ namespace Tabarru
             app.UseAuthorization();
 
             app.MapControllers();
+
+            app.MapGet("/", () => "API is running...");
 
             app.Run();
         }
