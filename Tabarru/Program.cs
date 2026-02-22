@@ -44,6 +44,7 @@ namespace Tabarru
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IFileStoringService, FileStoringService>();
             builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+            builder.Services.AddScoped<IDonationReportService, DonationReportService>();
 
             // Repository
             builder.Services.AddTransient<ICharityRepository, CharityRepository>();
@@ -56,6 +57,7 @@ namespace Tabarru
             builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
             builder.Services.AddScoped<IGiftAidRepository, GiftAidRepository>();
             builder.Services.AddScoped<IRecurringPaymentRepository, RecurringPaymentRepository>();
+            builder.Services.AddScoped<IDonationRepository, DonationRepository>();
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSingleton<IAuthorizationHandler, ValidateKycStatusPolicy>();
