@@ -13,13 +13,30 @@ namespace Tabarru.Services.Implementation
             this.donationRepository = donationRepository;
         }
 
-        public Task<List<DonationReportResponse>> GetAllTransactions(string charityId) =>
-        donationRepository.GetAllTransactionsAsync(charityId);
+        public Task<PagedResponse<DonationReportResponse>> GetAllTransactions(string charityId, int pageNumber, int pageSize)
+        => donationRepository
+        .GetAllTransactionsAsync(
+        charityId,
+        pageNumber,
+        pageSize);
 
-        public Task<List<DonationReportResponse>> GetGiftAidTransactions(string charityId) =>
-            donationRepository.GetGiftAidTransactionsAsync(charityId);
 
-        public Task<List<DonationReportResponse>> GetTransactionsWithoutGiftAid(string charityId) =>
-            donationRepository.GetTransactionsWithoutGiftAidAsync(charityId);
+
+        public Task<PagedResponse<DonationReportResponse>>
+        GetGiftAidTransactions(string charityId, int pageNumber, int pageSize) =>
+        donationRepository
+        .GetGiftAidTransactionsAsync(
+        charityId,
+        pageNumber,
+        pageSize);
+
+
+
+        public Task<PagedResponse<DonationReportResponse>> GetTransactionsWithoutGiftAid(string charityId, int pageNumber, int pageSize)
+        => donationRepository
+        .GetTransactionsWithoutGiftAidAsync(
+        charityId,
+        pageNumber,
+        pageSize);
     }
 }

@@ -4,9 +4,9 @@ namespace Tabarru.Repositories.IRepository
 {
     public interface IDonationRepository
     {
-        Task<List<DonationReportResponse>> GetAllTransactionsAsync(string charityId);
-        Task<List<DonationReportResponse>> GetGiftAidTransactionsAsync(string charityId);
-        Task<List<DonationReportResponse>> GetTransactionsWithoutGiftAidAsync(string charityId);
+        Task<PagedResponse<DonationReportResponse>> GetAllTransactionsAsync(string charityId, int pageNumber, int pageSize);
+        Task<PagedResponse<DonationReportResponse>> GetGiftAidTransactionsAsync(string charityId, int pageNumber, int pageSize);
+        Task<PagedResponse<DonationReportResponse>> GetTransactionsWithoutGiftAidAsync(string charityId, int pageNumber, int pageSize);
     }
 
 }

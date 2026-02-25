@@ -4,8 +4,8 @@ namespace Tabarru.Services.IServices
 {
     public interface IDonationReportService
     {
-        Task<List<DonationReportResponse>> GetAllTransactions(string charityId);
-        Task<List<DonationReportResponse>> GetGiftAidTransactions(string charityId);
-        Task<List<DonationReportResponse>> GetTransactionsWithoutGiftAid(string charityId);
+        Task<PagedResponse<DonationReportResponse>> GetAllTransactions(string charityId, int pageNumber, int pageSize);
+        Task<PagedResponse<DonationReportResponse>> GetGiftAidTransactions(string charityId, int pageNumber, int pageSize);
+        Task<PagedResponse<DonationReportResponse>> GetTransactionsWithoutGiftAid(string charityId, int pageNumber, int pageSize);
     }
 }

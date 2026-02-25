@@ -35,6 +35,7 @@
         public decimal TodayAmount { get; set; }
         public decimal ThisWeekAmount { get; set; }
         public decimal ThisMonthAmount { get; set; }
+        public decimal CustomAmount { get; set; }
     }
 
 

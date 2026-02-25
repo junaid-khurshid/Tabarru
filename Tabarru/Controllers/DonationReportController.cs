@@ -19,28 +19,41 @@ namespace Tabarru.Controllers
         }
 
         [HttpGet("all-transactions")]
-        public async Task<Response<IList<DonationReportResponse>>> GetAllTransactions()
+        public async Task<PagedResponse<DonationReportResponse>> GetAllTransactions(
+        int pageNumber = 1,
+        int pageSize = 10)
         {
-            var res = await donationReportService.GetAllTransactions(TokenClaimHelper.GetId(User));
-
-            return new Response<IList<DonationReportResponse>>(HttpStatusCode.OK, res, ResponseCode.Data);
+            return await donationReportService
+                        .GetAllTransactions(
+                            TokenClaimHelper.GetId(User),
+                            pageNumber,
+                            pageSize);
         }
+
 
         [HttpGet("gift-aid-transactions")]
-        public async Task<Response<IList<DonationReportResponse>>> GetGiftAidTransactions()
+        public async Task<PagedResponse<DonationReportResponse>> GetGiftAidTransactions(
+        int pageNumber = 1,
+        int pageSize = 10)
         {
-            var res = await donationReportService.GetGiftAidTransactions(TokenClaimHelper.GetId(User));
-
-            return new Response<IList<DonationReportResponse>>(HttpStatusCode.OK, res, ResponseCode.Data);
+            return await donationReportService
+                        .GetGiftAidTransactions(
+                            TokenClaimHelper.GetId(User),
+                            pageNumber,
+                            pageSize);
         }
 
-        [HttpGet("transactions-without-gift-aid")]
-        public async Task<Response<IList<DonationReportResponse>>> GetTransactionsWithoutGiftAid()
-        {
-            var res = await donationReportService.GetTransactionsWithoutGiftAid(TokenClaimHelper.GetId(User));
 
-            return new Response<IList<DonationReportResponse>>(HttpStatusCode.OK, res, ResponseCode.Data);
-            
+        [HttpGet("transactions-without-gift-aid")]
+        public async Task<PagedResponse<DonationReportResponse>> GetTransactionsWithoutGiftAid(
+        int pageNumber = 1,
+        int pageSize = 10)
+        {
+            return await donationReportService
+            .GetTransactionsWithoutGiftAid(
+                TokenClaimHelper.GetId(User),
+                pageNumber,
+                pageSize);
         }
     }
 }
