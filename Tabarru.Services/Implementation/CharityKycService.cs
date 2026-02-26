@@ -31,7 +31,7 @@ namespace Tabarru.Services.Implementation
             this.dbContext = dbContext;
         }
 
-        public async Task<Response> SubmitKycAsync(string charityId, CharityKycDto dto)
+        public async Task<Response> SubmitKycAsync(string charityId, CharityKycDto charityKycDto)
         {
             await using var transaction = await dbContext.Database.BeginTransactionAsync();
 
@@ -66,20 +66,20 @@ namespace Tabarru.Services.Implementation
                     CharityId = charityId,
                     Status = CharityKycStatus.Pending,
                     IsCharityDocumentUploaded =
-                        !string.IsNullOrWhiteSpace(dto.IncorporationCertificate),
+                        !string.IsNullOrWhiteSpace(charityKycDto.IncorporationCertificate),
 
-                    FirstName = dto.FirstName,
-                    LastName = dto.LastName,
-                    CharityName = dto.CharityName,
-                    CountryCode = dto.CountryCode,
-                    CharityNumber = dto.CharityNumber,
+                    FirstName = charityKycDto.FirstName,
+                    LastName = charityKycDto.LastName,
+                    CharityName = charityKycDto.CharityName,
+                    CountryCode = charityKycDto.CountryCode,
+                    CharityNumber = charityKycDto.CharityNumber,
                     CharityKycDocuments = new CharityKycDocuments
                     {
-                        Logo = dto.Logo,
-                        IncorporationCertificate = dto.IncorporationCertificate,
-                        UtilityBill = dto.UtilityBill,
-                        TaxExemptionCertificate = dto.TaxExemptionCertificate,
-                        BankStatement = dto.BankStatement
+                        Logo = charityKycDto.Logo,
+                        IncorporationCertificate = charityKycDto.IncorporationCertificate,
+                        UtilityBill = charityKycDto.UtilityBill,
+                        TaxExemptionCertificate = charityKycDto.TaxExemptionCertificate,
+                        BankStatement = charityKycDto.BankStatement
                     }
                 };
 
