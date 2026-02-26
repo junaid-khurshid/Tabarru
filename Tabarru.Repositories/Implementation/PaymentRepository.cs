@@ -158,11 +158,11 @@ namespace Tabarru.Repositories.Implementation
             if (start.HasValue && end.HasValue)
             {
                 var startDate = start.Value.Date;
-                var endDate = end.Value.Date.AddDays(1); // exclusive
+                var endDate = end.Value.Date; // exclusive
 
                 return await baseQuery
-                    .Where(x => x.PaymentDateTime >= startDate &&
-                                x.PaymentDateTime < endDate)
+                    .Where(x => x.PaymentDateTime >= start.Value &&
+                                x.PaymentDateTime <= end.Value)
                     .Join(dbStorageContext.Campaigns,
                           payment => payment.CampaignId,
                           campaign => campaign.Id,
@@ -173,7 +173,7 @@ namespace Tabarru.Repositories.Implementation
                         CampaignId = g.Key.CampaignId,
                         CampaignName = g.Key.Name,
 
-                        TodayAmount = g.Sum(x => x.payment.Amount),
+                        CustomAmount = g.Sum(x => x.payment.Amount),
                         ThisWeekAmount = 0,
                         ThisMonthAmount = 0
                     })
@@ -240,11 +240,11 @@ namespace Tabarru.Repositories.Implementation
                         x.PaymentDateTime >= start.Value &&
                         x.PaymentDateTime <= end.Value);
 
-                response.Custom = await query
+                var customData = await query
                     .GroupBy(x => x.PaymentDateTime.Date)
-                    .Select(g => new RevenueGraphPoint
+                    .Select(g => new
                     {
-                        Label = g.Key.ToString("yyyy-MM-dd"),
+                        Date = g.Key,
 
                         Revenue =
                             g.Where(x => !x.IsGiftAid)
@@ -254,8 +254,17 @@ namespace Tabarru.Repositories.Implementation
                             g.Where(x => x.IsGiftAid)
                             .Sum(x => (decimal?)x.Amount) ?? 0
                     })
-                    .OrderBy(x => x.Label)
+                    .OrderBy(x => x.Date)
                     .ToListAsync();
+
+                response.Custom = customData
+                    .Select(x => new RevenueGraphPoint
+                    {
+                        Label = x.Date.ToString("yyyy-MM-dd"),
+                        Revenue = x.Revenue,
+                        GiftAidRevenue = x.GiftAidRevenue
+                    })
+                    .ToList();
 
                 return response;
             }
