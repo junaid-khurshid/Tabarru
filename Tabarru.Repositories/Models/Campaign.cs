@@ -22,8 +22,8 @@ namespace Tabarru.Repositories.Models
         [Required]
         public string ListOfAmounts { get; set; }
 
-        public bool IsEnabled { get; set; } = false;
+        public bool isMembershipForm { get; set; } = false;
 
-        public bool IsDefault { get; set; } = false;
+        public bool isStudentForm { get; set; } = false;
     }
 }

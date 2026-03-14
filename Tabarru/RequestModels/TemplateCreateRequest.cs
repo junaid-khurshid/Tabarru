@@ -14,6 +14,9 @@ namespace Tabarru.RequestModels
         //[ValidateFile(5, 2000)]
         public IFormFile Icon { get; set; }
         public string Message { get; set; }
+        public int ShapeId { get; set; }
+        public string SecondaryColor { get; set; }
+        public string PrimaryColor { get; set; }
 
         [Required]
         public string Modes { get; set; }
@@ -37,6 +40,9 @@ namespace Tabarru.RequestModels
                 Modes = request.ParsedModes.Select(x => x.MapToDto()).ToList(),
                 Icon = request.Icon,
                 Message = request.Message,
+                ShapeId = request.ShapeId,
+                PrimaryColor = request.PrimaryColor,
+                SecondaryColor = request.SecondaryColor
             };
         }
     }

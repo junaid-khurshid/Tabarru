@@ -10,8 +10,8 @@ namespace Tabarru.Services.Models
         public string Name { get; set; }
         public IFormFile Icon { get; set; }
         public string ListOfAmounts { get; set; }
-        public bool IsEnabled { get; set; }
-        public bool IsDefault { get; set; }
+        public bool isMembershipForm { get; set; }
+        public bool isStudentForm { get; set; }
     }
 
     static class CampaignExtension
@@ -25,8 +25,8 @@ namespace Tabarru.Services.Models
                 Name = campaign.Name,
                 Icon = campaign.Icon,
                 ListOfAmounts = campaign.ListOfAmounts,
-                IsEnabled = campaign.IsEnabled,
-                IsDefault = campaign.IsDefault,
+                isStudentForm = campaign.isStudentForm,
+                isMembershipForm = campaign.isMembershipForm,
             };
         }
     }
@@ -38,7 +38,7 @@ namespace Tabarru.Services.Models
         public string Name { get; set; }
         public string Icon { get; set; }
         public string ListOfAmounts { get; set; }
-        public bool IsEnabled { get; set; }
-        public bool IsDefault { get; set; }
+        public bool isMembershipForm { get; set; }
+        public bool isStudentForm { get; set; }
     }
 }

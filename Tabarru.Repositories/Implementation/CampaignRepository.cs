@@ -22,7 +22,7 @@ namespace Tabarru.Repositories.Implementation
 
         public async Task<Campaign> GetAllByCharityIdAndDefaultOneOnlyAsync(string CharityId)
         {
-            return await dbStorageContext.Campaigns.FirstOrDefaultAsync(x => x.CharityId.Equals(CharityId) && x.IsDefault == true);
+            return await dbStorageContext.Campaigns.FirstOrDefaultAsync(x => x.CharityId.Equals(CharityId));
         }
 
         public async Task<Campaign> GetByCampaignIdAndCharityIdOnlyAsync(string CampaignId, string CharityId)

@@ -9,5 +9,6 @@ namespace Tabarru.Repositories.IRepository
         Task<bool> AddAsync(Charity charity);
         Task<bool> UpdateAsync(Charity charity);
         Task<Charity> GetCharityAllDetailsByIdAsync(string charityId);
+        Task<CharityKycDetails> GetCharityKycDetailsAsync(string charityId);
     }
 }

@@ -16,8 +16,8 @@ namespace Tabarru.RequestModels
         [Required(ErrorMessage = "REQUIRED")]
         public string ListOfAmounts { get; set; }
 
-        public bool IsEnabled { get; set; } = true;
-        public bool IsDefault { get; set; } = false;
+        public bool isMembershipForm { get; set; } = true;
+        public bool isStudentForm { get; set; } = false;
     }
 
     static class CampaignExtension
@@ -28,8 +28,8 @@ namespace Tabarru.RequestModels
             {
                 Name = request.Name,
                 Icon = request.Icon,
-                IsEnabled = request.IsEnabled,
-                IsDefault = request.IsDefault,
+                isStudentForm = request.isStudentForm,
+                isMembershipForm = request.isMembershipForm,
                 CharityId = CharityId,
                 ListOfAmounts = request.ListOfAmounts,
             };

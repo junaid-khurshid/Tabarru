@@ -9,6 +9,9 @@ namespace Tabarru.Services.Models
         public string CharityId { get; set; }
         public IFormFile Icon { get; set; }
         public string Message { get; set; }
+        public int ShapeId { get; set; }
+        public string SecondaryColor { get; set; }
+        public string PrimaryColor { get; set; }
         public List<ModeDto> Modes { get; set; }
     }
 }

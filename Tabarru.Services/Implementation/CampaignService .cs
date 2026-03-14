@@ -34,15 +34,15 @@ namespace Tabarru.Services.Implementation
                 return new Response(HttpStatusCode.BadRequest, "A campaign with the same name already exists.");
 
             // 2. if dto.IsDefault true, unset any existing default campaigns
-            if (dto.IsDefault)
-            {
-                var currentDefault = await campaignRepository.GetAllByCharityIdAndDefaultOneOnlyAsync(dto.CharityId);
-                if (currentDefault != null)
-                {
-                    currentDefault.IsDefault = false;
-                    await campaignRepository.UpdateAsync(currentDefault);
-                }
-            }
+            //if (dto.IsDefault)
+            //{
+            //    var currentDefault = await campaignRepository.GetAllByCharityIdAndDefaultOneOnlyAsync(dto.CharityId);
+            //    if (currentDefault != null)
+            //    {
+            //        currentDefault.IsDefault = false;
+            //        await campaignRepository.UpdateAsync(currentDefault);
+            //    }
+            //}
 
             var campaign = new Campaign
             {
@@ -50,8 +50,8 @@ namespace Tabarru.Services.Implementation
                 Name = dto.Name.Trim(),
                 Icon = await dto.Icon.ConvertFileToBase64Async(),
                 ListOfAmounts = dto.ListOfAmounts,
-                IsEnabled = dto.IsEnabled,
-                IsDefault = dto.IsDefault,
+                isMembershipForm = dto.isMembershipForm,
+                isStudentForm = dto.isStudentForm,
             };
 
             var added = await campaignRepository.AddAsync(campaign);
@@ -74,20 +74,20 @@ namespace Tabarru.Services.Implementation
             if (existing != null && existing.Id != dto.Id)
                 return new Response(HttpStatusCode.BadRequest, "A campaign with the same name already exists.");
 
-            if (dto.IsDefault)
-            {
-                var currentDefault = await campaignRepository.GetAllByCharityIdAndDefaultOneOnlyAsync(dto.CharityId);
-                if (currentDefault != null && currentDefault.Id != dto.Id)
-                {
-                    currentDefault.IsDefault = false;
-                    await campaignRepository.UpdateAsync(currentDefault);
-                }
-            }
+            //if (dto.IsDefault)
+            //{
+            //    var currentDefault = await campaignRepository.GetAllByCharityIdAndDefaultOneOnlyAsync(dto.CharityId);
+            //    if (currentDefault != null && currentDefault.Id != dto.Id)
+            //    {
+            //        currentDefault.IsDefault = false;
+            //        await campaignRepository.UpdateAsync(currentDefault);
+            //    }
+            //}
 
             campaign.Name = dto.Name.Trim();
             campaign.ListOfAmounts = dto.ListOfAmounts;
-            campaign.IsEnabled = dto.IsEnabled;
-            campaign.IsDefault = dto.IsDefault;
+            campaign.isMembershipForm = dto.isMembershipForm;
+            campaign.isStudentForm = dto.isStudentForm;
 
             if (dto.Icon != null)
             {
@@ -134,19 +134,19 @@ namespace Tabarru.Services.Implementation
             using (var transaction = await dbContext.Database.BeginTransactionAsync())
             {
 
-                if (dto.IsDefault)
-                {
-                    var campaignDefaulted = await campaignRepository.GetAllByCharityIdAndDefaultOneOnlyAsync(dto.CharityId);
-                    if (campaignDefaulted.Id != dto.CampaignId)
-                    {
+                //if (dto.IsDefault)
+                //{
+                //    var campaignDefaulted = await campaignRepository.GetAllByCharityIdAndDefaultOneOnlyAsync(dto.CharityId);
+                //    if (campaignDefaulted.Id != dto.CampaignId)
+                //    {
 
-                        campaignDefaulted.IsDefault = false;
-                        await campaignRepository.UpdateAsync(campaignDefaulted);
-                    }
-                }
+                //        campaignDefaulted.IsDefault = false;
+                //        await campaignRepository.UpdateAsync(campaignDefaulted);
+                //    }
+                //}
 
-                campaign.IsEnabled = dto.IsEnabled;
-                campaign.IsDefault = dto.IsDefault;
+                campaign.isMembershipForm = dto.isMembershipForm;
+                campaign.isStudentForm = dto.isStudentForm;
 
                 if (await campaignRepository.UpdateAsync(campaign))
                 {

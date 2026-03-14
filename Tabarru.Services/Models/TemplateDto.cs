@@ -11,6 +11,9 @@ namespace Tabarru.Services.Models
         public string CampaignId { get; set; }
         public IFormFile Icon { get; set; }
         public string Message { get; set; }
+        public int ShapeId { get; set; }
+        public string SecondaryColor { get; set; }
+        public string PrimaryColor { get; set; }
         public List<ModeDto> Modes { get; set; }
     }
 
@@ -25,7 +28,10 @@ namespace Tabarru.Services.Models
                 Name = template.Name,
                 Icon = template.Icon,
                 Message = template.Message,
-                Modes = template.Modes.Where(m => !m.IsDeleted).Select(x => x.MapToDto())
+                SecondaryColor = template.SecondaryColor,
+                PrimaryColor = template.PrimaryColor,
+                ShapeId = template.ShapeId ?? 0,
+                Modes = template.Modes?.Where(m => !m.IsDeleted).Select(x => x.MapToDto()) ?? new List<ModeReadDto>()
             };
         }
     }
@@ -36,6 +42,9 @@ namespace Tabarru.Services.Models
         public string Name { get; set; }
         public string Icon { get; set; }
         public string Message { get; set; }
+        public int? ShapeId { get; set; }
+        public string? SecondaryColor { get; set; }
+        public string PrimaryColor { get; set; }
         public string CharityId { get; set; }
         public IEnumerable<ModeReadDto> Modes { get; set; }
     }

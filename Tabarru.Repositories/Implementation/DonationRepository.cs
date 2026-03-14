@@ -2,6 +2,7 @@
 using Tabarru.Common.Models;
 using Tabarru.Repositories.DatabaseContext;
 using Tabarru.Repositories.IRepository;
+using Tabarru.Repositories.Models;
 
 namespace Tabarru.Repositories.Implementation
 {
@@ -29,6 +30,38 @@ namespace Tabarru.Repositories.Implementation
             var data = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
             return new PagedResponse<DonationReportResponse> { PageNumber = pageNumber, PageSize = pageSize, TotalRecords = totalRecords, Data = data };
+        }
+
+        public async Task<List<PaymentDetailResponse>> GetTodayTransactionsAsync(string charityId)
+        {
+            var today = DateTime.UtcNow.Date;
+            var tomorrow = today.AddDays(1);
+
+            var data = await dbStorageContext.PaymentDetails.AsNoTracking()
+                .Where(p =>
+                    p.CharityId == charityId &&
+                    !p.IsDeleted &&
+                    p.PaymentDateTime >= today &&
+                    p.PaymentDateTime < tomorrow)
+                .OrderByDescending(p => p.PaymentDateTime)
+                .Select(p => new PaymentDetailResponse
+                {
+                    Id = p.Id,
+                    CharityId = p.CharityId,
+                    TransactionId = p.TransactionId,
+                    Status = p.Status,
+                    Amount = p.Amount,
+                    Currency = p.Currency,
+                    VendorType = p.VendorType,
+                    PaymentDateTime = p.PaymentDateTime,
+                    Description = p.Description,
+                    IsGiftAid = p.IsGiftAid,
+                    IsBankFeeCovered = p.IsBankFeeCovered,
+                    IsRecurringPayment = p.IsRecurringPayment
+                })
+                .ToListAsync();
+
+            return data;
         }
 
         public async Task<PagedResponse<DonationReportResponse>> GetGiftAidTransactionsAsync(string charityId, int pageNumber, int pageSize)

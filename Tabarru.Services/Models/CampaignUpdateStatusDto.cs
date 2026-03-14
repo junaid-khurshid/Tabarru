@@ -6,8 +6,8 @@
 
         public string CharityId { get; set; }
 
-        public bool IsEnabled { get; set; }
+        public bool isMembershipForm { get; set; }
 
-        public bool IsDefault { get; set; }
+        public bool isStudentForm { get; set; }
     }
 }

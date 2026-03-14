@@ -51,6 +51,9 @@ namespace Tabarru.Services.Implementation
                 CharityId = template.CharityId,
                 Icon = template.Icon,
                 Message = template.Message,
+                ShapeId = template.ShapeId ?? 0,
+                SecondaryColor = template.SecondaryColor,
+                PrimaryColor = template.PrimaryColor,
                 Modes = template.Modes.Where(m => !m.IsDeleted).Select(mode => new ModeReadDto
                 {
                     Id = mode.Id,
@@ -81,6 +84,9 @@ namespace Tabarru.Services.Implementation
                 Name = request.Name,
                 Icon = await request.Icon.ConvertFileToBase64Async(),
                 Message = request.Message,
+                ShapeId = request.ShapeId,
+                SecondaryColor = request.SecondaryColor,
+                PrimaryColor = request.PrimaryColor,
             };
 
             foreach (var mode in request.Modes)
@@ -129,6 +135,9 @@ namespace Tabarru.Services.Implementation
             template.CharityId = request.CharityId;
             template.Icon = await request.Icon.ConvertFileToBase64Async();
             template.Message = request.Message;
+            template.ShapeId = request.ShapeId;
+            template.SecondaryColor = request.SecondaryColor;
+            template.PrimaryColor = request.PrimaryColor;
 
             var newModes = new List<Mode>();
             foreach (var modeDto in request.Modes)

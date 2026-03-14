@@ -18,6 +18,10 @@ namespace Tabarru.Repositories.Models
         public string Icon { get; set; }
         public string Message { get; set; }
 
+        public int? ShapeId { get; set; }
+        public string? SecondaryColor { get; set; }
+        public string? PrimaryColor { get; set; }
+
         public ICollection<Mode> Modes { get; set; } = new List<Mode>();
     }
 }

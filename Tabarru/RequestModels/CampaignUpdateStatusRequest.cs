@@ -9,10 +9,10 @@ namespace Tabarru.RequestModels
         public string CampaignId { get; set; }
 
         [Required]
-        public bool IsEnabled { get; set; }
+        public bool isMembershipForm { get; set; }
 
         [Required]
-        public bool IsDefault { get; set; }
+        public bool isStudentForm { get; set; }
     }
 
     static class CampaignUpdateStatusExtension
@@ -23,8 +23,8 @@ namespace Tabarru.RequestModels
             {
                 CampaignId = campaignUpdateStatusRequest.CampaignId,
                 CharityId = CharityId,
-                IsDefault = campaignUpdateStatusRequest.IsDefault,
-                IsEnabled = campaignUpdateStatusRequest.IsEnabled,
+                isStudentForm = campaignUpdateStatusRequest.isStudentForm,
+                isMembershipForm = campaignUpdateStatusRequest.isMembershipForm,
             };
         }
 
