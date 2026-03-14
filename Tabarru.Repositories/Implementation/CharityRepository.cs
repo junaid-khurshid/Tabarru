@@ -35,6 +35,13 @@ namespace Tabarru.Repositories.Implementation
             return await dbStorageContext.SaveChangesAsync() > 0;
         }
 
+        public async Task<CharityKycDetails> GetCharityKycDetailsAsync(string charityId)
+        {
+            return await dbStorageContext.CharityKycDetails
+                .Include(x => x.CharityKycDocuments)
+                .FirstOrDefaultAsync(x => x.CharityId == charityId && !x.IsDeleted);
+        }
+
         public async Task<Charity> GetCharityAllDetailsByIdAsync(string charityId)
         {
             return await dbStorageContext.Charities

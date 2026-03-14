@@ -20,13 +20,15 @@ namespace Tabarru.Services.Implementation
         private readonly IEmailMessageService emailMessageService;
         private readonly DbContext dbContext;
         private readonly IConfiguration configuration;
+        private readonly ICharityKycRepository charityKycRepository;
 
         public CharityAccountService(ICharityRepository charityRepository,
             IEmailVerificationRepository emailVerificationRepository,
             IPackageRepository packageRepository,
             IEmailMessageService emailMessageService,
             DbStorageContext dbContext,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ICharityKycRepository charityKycRepository)
         {
             this.charityRepository = charityRepository;
             this.emailVerificationRepository = emailVerificationRepository;
@@ -34,6 +36,7 @@ namespace Tabarru.Services.Implementation
             this.emailMessageService = emailMessageService;
             this.dbContext = dbContext;
             this.configuration = configuration;
+            this.charityKycRepository = charityKycRepository;
         }
 
         public async Task<CharityDetailDto> GetByEmail(string email)
@@ -260,9 +263,37 @@ namespace Tabarru.Services.Implementation
             var charity = await charityRepository.GetCharityAllDetailsByIdAsync(ChairtyId);
             if (charity is null)
             {
-                return new Response<CharityReadDto>(HttpStatusCode.OK,"Charity Not Found");
+                return new Response<CharityReadDto>(HttpStatusCode.OK, "Charity Not Found");
             }
             return new Response<CharityReadDto>(HttpStatusCode.OK, charity.MapToDto(), ResponseCode.Data);
+        }
+
+        public async Task<Response> UpdateCharityDetailsAsync(UpdateCharityDetailsDto request)
+        {
+            var charityKyc = await charityRepository.GetCharityKycDetailsAsync(request.CharityId);
+
+            if (charityKyc == null)
+                throw new Exception("Charity not found");
+
+            charityKyc.FirstName = request.FirstName;
+            charityKyc.LastName = request.LastName;
+            charityKyc.CharityName = request.CharityName;
+            charityKyc.CharityNumber = request.CharityNumber;
+            charityKyc.CountryCode = request.CountryCode;
+
+            if (charityKyc.CharityKycDocuments != null)
+            {
+                charityKyc.CharityKycDocuments.Logo = request.Logo;
+            }
+
+            var udpate = await charityKycRepository.AddAsync(charityKyc);
+
+            if (!udpate)
+            {
+                return new Response(HttpStatusCode.BadRequest, "Charity update failed");
+            }
+
+            return new Response(HttpStatusCode.OK, "Charity update Successfully");
         }
 
         //public async Task<Response<LoginResponse>> GenerateRefreshToken(string token)

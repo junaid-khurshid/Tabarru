@@ -42,6 +42,7 @@ namespace Tabarru.Repositories.Implementation
             return await dbStorageContext.Charities
                 .Include(c => c.CharityKycDetails)
                 .ThenInclude(k => k.CharityKycDocuments)
+                .OrderByDescending(x=> x.CreatedDate)
                 .ToListAsync();
         }
 

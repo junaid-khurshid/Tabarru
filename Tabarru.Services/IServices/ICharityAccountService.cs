@@ -12,5 +12,6 @@ namespace Tabarru.Services.IServices
         Task<Response> VerifyToken(VerifyRequestDto request);
         Task<Response> AssignPackageAsync(CharityPackageUpdateDto dto);
         Task<Response<CharityReadDto>> GetCharityDetailsAsync(string ChairtyId);
+        Task<Response> UpdateCharityDetailsAsync(UpdateCharityDetailsDto request);
     }
 }

@@ -4,6 +4,7 @@ using System.Net;
 using Tabarru.Common.Helper;
 using Tabarru.Common.Models;
 using Tabarru.RequestModels;
+using Tabarru.Services.Implementation;
 using Tabarru.Services.IServices;
 using Tabarru.Services.Models;
 
@@ -16,16 +17,19 @@ namespace Tabarru.Controllers
     public class CharityKycController : ControllerBase
     {
         private readonly ICharityKycService _kycService;
+        private readonly CharityAccountService charityAccountService;
 
-        public CharityKycController(ICharityKycService kycService)
+        public CharityKycController(ICharityKycService kycService,
+            CharityAccountService charityAccountService)
         {
             _kycService = kycService;
+            this.charityAccountService = charityAccountService;
         }
 
         [HttpPost("submit")]
-        public async Task<Response> SubmitKyc([FromForm] CharityKycSubmitRequest dto)
+        public async Task<Response> SubmitKyc([FromForm] CharityKycSubmitRequest charityKycSubmitRequest)
         {
-            return await _kycService.SubmitKycAsync(TokenClaimHelper.GetId(User), dto.MapToDto());
+            return await _kycService.SubmitKycAsync(TokenClaimHelper.GetId(User), charityKycSubmitRequest.MapToDto());
         }
 
         [HttpPut("re-submit")]
@@ -45,12 +49,14 @@ namespace Tabarru.Controllers
 
 
         [HttpGet("admin/all")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<Response<IList<CharityReadDto>>> GetAllCharities()
         {
             return await _kycService.GetAllCharitiesForAdminAsync();
         }
 
         [HttpPut("admin/update-status")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<Response> UpdateKycStatus([FromBody] AdminKycUpdateDto dto)
         {
             return await _kycService.UpdateKycStatusAsync(dto);
@@ -60,6 +66,12 @@ namespace Tabarru.Controllers
         public async Task<Response<string>> GetKycImage([FromQuery] string path)
         {
             return await _kycService.GetKycImageAsync(path);
+        }
+
+        [HttpPut("update")]
+        public async Task<Response> UpdateCharityDetails(UpdateCharityDetailsRequest request)
+        {
+            return await charityAccountService.UpdateCharityDetailsAsync(request.MapToDto(TokenClaimHelper.GetId(User)));
         }
     }
 }
