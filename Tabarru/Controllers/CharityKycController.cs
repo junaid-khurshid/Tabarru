@@ -16,26 +16,26 @@ namespace Tabarru.Controllers
 
     public class CharityKycController : ControllerBase
     {
-        private readonly ICharityKycService _kycService;
-        private readonly CharityAccountService charityAccountService;
+        private readonly ICharityKycService kycService;
+        private readonly ICharityAccountService charityAccountService;
 
         public CharityKycController(ICharityKycService kycService,
-            CharityAccountService charityAccountService)
+            ICharityAccountService charityAccountService)
         {
-            _kycService = kycService;
+            this.kycService = kycService;
             this.charityAccountService = charityAccountService;
         }
 
         [HttpPost("submit")]
         public async Task<Response> SubmitKyc([FromForm] CharityKycSubmitRequest charityKycSubmitRequest)
         {
-            return await _kycService.SubmitKycAsync(TokenClaimHelper.GetId(User), charityKycSubmitRequest.MapToDto());
+            return await kycService.SubmitKycAsync(TokenClaimHelper.GetId(User), charityKycSubmitRequest.MapToDto());
         }
 
         [HttpPut("re-submit")]
         public async Task<Response> UpdateKyc([FromForm] CharityKycSubmitRequest dto)
         {
-            return await _kycService.SubmitKycAsync(TokenClaimHelper.GetId(User), dto.MapToDto());
+            return await kycService.SubmitKycAsync(TokenClaimHelper.GetId(User), dto.MapToDto());
         }
 
         [HttpPost("upload")]
@@ -44,7 +44,7 @@ namespace Tabarru.Controllers
             if (uploadFileRequest.File == null)
                 return new Response<string>(HttpStatusCode.BadRequest, "File is required");
 
-            return await _kycService.UploadAsync(uploadFileRequest.File, uploadFileRequest.FileName, TokenClaimHelper.GetId(User));
+            return await kycService.UploadAsync(uploadFileRequest.File, uploadFileRequest.FileName, TokenClaimHelper.GetId(User));
         }
 
 
@@ -52,20 +52,20 @@ namespace Tabarru.Controllers
         [Authorize(Roles = "ADMIN")]
         public async Task<Response<IList<CharityReadDto>>> GetAllCharities()
         {
-            return await _kycService.GetAllCharitiesForAdminAsync();
+            return await kycService.GetAllCharitiesForAdminAsync();
         }
 
         [HttpPut("admin/update-status")]
         [Authorize(Roles = "ADMIN")]
         public async Task<Response> UpdateKycStatus([FromBody] AdminKycUpdateDto dto)
         {
-            return await _kycService.UpdateKycStatusAsync(dto);
+            return await kycService.UpdateKycStatusAsync(dto);
         }
 
         [HttpGet("kycImage")]
         public async Task<Response<string>> GetKycImage([FromQuery] string path)
         {
-            return await _kycService.GetKycImageAsync(path);
+            return await kycService.GetKycImageAsync(path);
         }
 
         [HttpPut("update")]
