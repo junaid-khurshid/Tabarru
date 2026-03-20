@@ -24,7 +24,6 @@ namespace Tabarru.Controllers
         public async Task<Response> SavePayment([FromBody] PaymentSaveRequest dto)
         {
             return await paymentService.SavePayment(dto.MapToDto(TokenClaimHelper.GetId(User)));
-
         }
 
         [HttpGet("all")]

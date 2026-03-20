@@ -1,4 +1,7 @@
-﻿using Tabarru.Common.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Tabarru.Common.Enums;
+using Tabarru.Repositories.Models;
 using Tabarru.Services.Models;
 
 namespace Tabarru.RequestModels
@@ -13,6 +16,8 @@ namespace Tabarru.RequestModels
         public string CustomerId { get; set; }
         public string AuthorizationCode { get; set; }
         public bool IsGiftAid { get; set; }
+        public bool IsMemberShipForm { get; set; }
+        public bool IsStudentForm { get; set; }
         public bool IsBankFeeCovered { get; set; }
         public bool IsRecurringPayment { get; set; }
         public string Description { get; set; }
@@ -22,6 +27,8 @@ namespace Tabarru.RequestModels
         public string CampaignId { get; set; }
         // GiftAid details
         public GiftAidRequest GiftAid { get; set; }
+        public MembershipDetailRequest MembershipDetailRequest { get; set; }
+        public StudentFormDetailRequest StudentFormDetailRequest { get; set; }
 
         // Recurring Payment details
         public DateTime? NextRecurringDate { get; set; }
@@ -37,6 +44,32 @@ namespace Tabarru.RequestModels
         public string Phone { get; set; }
     }
 
+    public class StudentFormDetailRequest
+    {
+        public string StudentName { get; set; }
+        public string ParentName { get; set; }
+        public string FullAddress { get; set; }
+        public string StudentId { get; set; }
+        public string ParentId { get; set; }
+        public int Amount { get; set; }
+        public string Period { get; set; }
+        public string Notes { get; set; }
+        public string Description1 { get; set; }
+        public string Description2 { get; set; }
+        public string Description3 { get; set; }
+    }
+
+    public class MembershipDetailRequest
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string HouseNumberAndName { get; set; }
+        public string PostalCode { get; set; }
+        public string Description1 { get; set; }
+        public string Description2 { get; set; }
+        public string Description3 { get; set; }
+    }
+
     static class PaymentDetailExtension
     {
         public static PaymentDto MapToDto(this PaymentSaveRequest paymentSaveRequest, string CharityId)
@@ -50,6 +83,8 @@ namespace Tabarru.RequestModels
                 CustomerId = paymentSaveRequest.CustomerId,
                 IsBankFeeCovered = paymentSaveRequest.IsBankFeeCovered,
                 IsGiftAid = paymentSaveRequest.IsGiftAid,
+                IsMemberShipForm = paymentSaveRequest.IsMemberShipForm,
+                IsStudentForm = paymentSaveRequest.IsStudentForm,
                 IsRecurringPayment = paymentSaveRequest.IsRecurringPayment,
                 NextRecurringDate = paymentSaveRequest.NextRecurringDate,
                 PaymentDateTime = paymentSaveRequest.PaymentDateTime,
@@ -60,6 +95,8 @@ namespace Tabarru.RequestModels
                 TemplateId = paymentSaveRequest.TemplateId,
                 VendorType = paymentSaveRequest.VendorType,
                 GiftAid = paymentSaveRequest.GiftAid.MapToDto(),
+                MembershipDetailDto = paymentSaveRequest.MembershipDetailRequest.MapToDto(),
+                StudentFormDetailDto = paymentSaveRequest.StudentFormDetailRequest.MapToDto(),
                 CharityId = CharityId
             };
         }
@@ -75,9 +112,38 @@ namespace Tabarru.RequestModels
                 Surname = giftAidRequest.Surname,
                 Title = giftAidRequest.Title
             };
-
-
         }
 
+        public static MembershipDetailDto MapToDto(this MembershipDetailRequest membershipDetailRequest)
+        {
+            return new MembershipDetailDto
+            {
+                FirstName = membershipDetailRequest.FirstName,
+                LastName = membershipDetailRequest.LastName,
+                HouseNumberAndName = membershipDetailRequest.HouseNumberAndName,
+                PostalCode = membershipDetailRequest.PostalCode,
+                Description1 = membershipDetailRequest.Description1,
+                Description2 = membershipDetailRequest.Description2,
+                Description3 = membershipDetailRequest.Description3
+            };
+        }
+
+        public static StudentFormDetailDto MapToDto(this StudentFormDetailRequest studentFormDetailRequest)
+        {
+            return new StudentFormDetailDto
+            {
+                Amount = studentFormDetailRequest.Amount,
+                Description3 = studentFormDetailRequest.Description3,
+                Description2 = studentFormDetailRequest.Description2,
+                Description1 = studentFormDetailRequest.Description1,
+                FullAddress = studentFormDetailRequest.FullAddress,
+                Notes = studentFormDetailRequest.Notes,
+                ParentId = studentFormDetailRequest.ParentId,
+                ParentName = studentFormDetailRequest.ParentName,
+                Period = studentFormDetailRequest.Period,
+                StudentId = studentFormDetailRequest.StudentId,
+                StudentName = studentFormDetailRequest.StudentName
+            };
+        }
     }
 }

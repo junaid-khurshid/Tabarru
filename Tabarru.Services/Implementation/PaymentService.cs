@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using System.Net;
+﻿using System.Net;
 using Tabarru.Common.Models;
 using Tabarru.Repositories.DatabaseContext;
 using Tabarru.Repositories.IRepository;
@@ -17,13 +16,19 @@ namespace Tabarru.Services.Implementation
         private readonly ITemplateRepository templateRepository;
         private readonly ICampaignRepository campaignRepository;
         private readonly DbStorageContext dbContext;
+        private readonly IDonationRepository donationRepository;
+        private readonly IStudentFormDetailRepository studentFormDetailRepository;
+        private readonly IMembershipDetailRepository membershipDetailRepository;
 
         public PaymentService(IPaymentRepository paymentRepository,
             IRecurringPaymentRepository recurringPaymentRepository,
             IGiftAidRepository giftAidRepository,
             ITemplateRepository templateRepository,
             ICampaignRepository campaignRepository,
-             DbStorageContext dbContext)
+             DbStorageContext dbContext,
+             IDonationRepository donationRepository,
+             IStudentFormDetailRepository studentFormDetailRepository,
+             IMembershipDetailRepository membershipDetailRepository)
         {
             this.paymentRepository = paymentRepository;
             this.recurringPaymentRepository = recurringPaymentRepository;
@@ -31,6 +36,9 @@ namespace Tabarru.Services.Implementation
             this.templateRepository = templateRepository;
             this.campaignRepository = campaignRepository;
             this.dbContext = dbContext;
+            this.donationRepository = donationRepository;
+            this.studentFormDetailRepository = studentFormDetailRepository;
+            this.membershipDetailRepository = membershipDetailRepository;
         }
 
         public async Task<Response> SavePayment(PaymentDto paymentDto)
@@ -87,6 +95,47 @@ namespace Tabarru.Services.Implementation
                         await giftAidRepository.AddAsync(giftAid);
                     }
 
+                    // Save Membership
+                    if (paymentDto.IsMemberShipForm && paymentDto.MembershipDetailDto != null)
+                    {
+                        var membershipDetail = new MembershipDetail
+                        {
+                            CharityId = paymentDto.CharityId,
+                            PaymentDetailId = paymentDetail.Id,
+                            Description3 = paymentDto.MembershipDetailDto.Description3,
+                            HouseNumberAndName = paymentDto.MembershipDetailDto.HouseNumberAndName,
+                            FirstName = paymentDto.MembershipDetailDto.FirstName,
+                            Description2 = paymentDto.MembershipDetailDto.Description2,
+                            Description1 = paymentDto.MembershipDetailDto.Description1,
+                            LastName = paymentDto.MembershipDetailDto.LastName,
+                            PostalCode = paymentDto.MembershipDetailDto.PostalCode,
+                        };
+                        await membershipDetailRepository.AddAsync(membershipDetail);
+                    }
+
+                    // Save Student Form
+                    if (paymentDto.IsStudentForm && paymentDto.StudentFormDetailDto != null)
+                    {
+                        var studentFormDetail = new StudentFormDetail
+                        {
+                            PaymentDetailId = paymentDetail.Id,
+                            CharityId = paymentDto.CharityId,
+                            Description1 = paymentDto.StudentFormDetailDto.Description1,
+                            Description2 = paymentDto.StudentFormDetailDto.Description2,
+                            Description3 = paymentDto.StudentFormDetailDto.Description3,
+                            Amount = paymentDto.StudentFormDetailDto.Amount,
+                            FullAddress = paymentDto.StudentFormDetailDto.FullAddress,
+                            Notes = paymentDto.StudentFormDetailDto.Notes,
+                            ParentId = paymentDto.StudentFormDetailDto.ParentId,
+                            ParentName = paymentDto.StudentFormDetailDto.ParentName,
+                            Period = paymentDto.StudentFormDetailDto.Period,
+                            StudentId = paymentDto.StudentFormDetailDto.StudentId,
+                            StudentName = paymentDto.StudentFormDetailDto.StudentName,
+
+                        };
+                        await studentFormDetailRepository.AddAsync(studentFormDetail);
+                    }
+
                     // Save RecurringPayment
                     if (paymentDto.IsRecurringPayment && paymentDto.NextRecurringDate.HasValue)
                     {
@@ -115,7 +164,6 @@ namespace Tabarru.Services.Implementation
                     throw ex;
                 }
             }
-
         }
 
         public async Task<Response> PaymentRecurring(PaymentDetail paymentDetail)
@@ -181,6 +229,11 @@ namespace Tabarru.Services.Implementation
             }).ToList();
 
             return new Response<List<PaymentReadDetailDto>>(HttpStatusCode.OK, result, Common.Enums.ResponseCode.Data);
+        }
+
+        public async Task<List<PaymentDetailResponse>> GetTodayTransactionsAsync(string charityId)
+        {
+            return await donationRepository.GetTodayTransactionsAsync(charityId);
         }
     }
 }

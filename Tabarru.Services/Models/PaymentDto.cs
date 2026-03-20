@@ -15,6 +15,8 @@ namespace Tabarru.Services.Models
         public string CustomerId { get; set; }
         public string AuthorizationCode { get; set; }
         public bool IsGiftAid { get; set; }
+        public bool IsMemberShipForm { get; set; }
+        public bool IsStudentForm { get; set; }
         public bool IsBankFeeCovered { get; set; }
         public bool IsRecurringPayment { get; set; }
         public string PaymentMethodId { get; set; }
@@ -24,6 +26,8 @@ namespace Tabarru.Services.Models
 
         // GiftAid details
         public GiftAidDto GiftAid { get; set; }
+        public StudentFormDetailDto StudentFormDetailDto { get; set; }
+        public MembershipDetailDto MembershipDetailDto { get; set; }
 
         // Recurring Payment details
         public DateTime? NextRecurringDate { get; set; }
@@ -37,6 +41,32 @@ namespace Tabarru.Services.Models
         public string Address { get; set; }
         public string Postcode { get; set; }
         public string Phone { get; set; }
+    }
+
+    public class StudentFormDetailDto
+    {
+        public string StudentName { get; set; }
+        public string ParentName { get; set; }
+        public string FullAddress { get; set; }
+        public string StudentId { get; set; }
+        public string ParentId { get; set; }
+        public int Amount { get; set; }
+        public string Period { get; set; }
+        public string Notes { get; set; }
+        public string Description1 { get; set; }
+        public string Description2 { get; set; }
+        public string Description3 { get; set; }
+    }
+
+    public class MembershipDetailDto
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string HouseNumberAndName { get; set; }
+        public string PostalCode { get; set; }
+        public string Description1 { get; set; }
+        public string Description2 { get; set; }
+        public string Description3 { get; set; }
     }
 
     public class PaymentReadDetailDto

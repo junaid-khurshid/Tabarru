@@ -58,6 +58,8 @@ namespace Tabarru
             builder.Services.AddScoped<IGiftAidRepository, GiftAidRepository>();
             builder.Services.AddScoped<IRecurringPaymentRepository, RecurringPaymentRepository>();
             builder.Services.AddScoped<IDonationRepository, DonationRepository>();
+            builder.Services.AddScoped<IStudentFormDetailRepository, StudentFormDetailRepository>();
+            builder.Services.AddScoped<IMembershipDetailRepository, MembershipDetailRepository>();
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSingleton<IAuthorizationHandler, ValidateKycStatusPolicy>();
