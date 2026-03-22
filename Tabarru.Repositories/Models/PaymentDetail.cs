@@ -33,6 +33,8 @@ namespace Tabarru.Repositories.Models
         public string PaymentMethodId { get; set; }
         public string Description { get; set; }
         public bool IsGiftAid { get; set; }
+        public bool isMembershipForm { get; set; } = false;
+        public bool isStudentForm { get; set; } = false;
         public bool IsBankFeeCovered { get; set; }
         public bool IsRecurringPayment { get; set; }
     }

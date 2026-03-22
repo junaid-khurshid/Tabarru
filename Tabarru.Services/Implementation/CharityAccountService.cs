@@ -270,7 +270,7 @@ namespace Tabarru.Services.Implementation
 
         public async Task<Response> UpdateCharityDetailsAsync(UpdateCharityDetailsDto request)
         {
-            var charityKyc = await charityRepository.GetCharityKycDetailsAsync(request.CharityId);
+            var charityKyc = await charityRepository.GetCharityKycDetailsApprovedAsync(request.CharityId);
 
             if (charityKyc == null)
                 throw new Exception("Charity not found");
@@ -286,7 +286,7 @@ namespace Tabarru.Services.Implementation
                 charityKyc.CharityKycDocuments.Logo = request.Logo;
             }
 
-            var udpate = await charityKycRepository.AddAsync(charityKyc);
+            var udpate = await charityKycRepository.UpdateAsync(charityKyc);
 
             if (!udpate)
             {

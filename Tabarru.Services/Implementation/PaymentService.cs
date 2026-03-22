@@ -171,7 +171,6 @@ namespace Tabarru.Services.Implementation
             return new Response(HttpStatusCode.OK);
         }
 
-
         public async Task<Response<List<PaymentReadDetailDto>>> GetByCharityIdAsync(string charityId)
         {
             var paymentDetails = (await paymentRepository.GetByCharityIdAsync(charityId)).ToList();
