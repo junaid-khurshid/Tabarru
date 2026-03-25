@@ -16,7 +16,7 @@ namespace Tabarru.RequestModels
         [Required(ErrorMessage = "REQUIRED")]
         public string ListOfAmounts { get; set; }
 
-        public bool isMembershipForm { get; set; } = true;
+        public bool isMembershipForm { get; set; } = false;
         public bool isStudentForm { get; set; } = false;
     }
 
