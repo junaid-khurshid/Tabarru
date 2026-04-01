@@ -56,6 +56,19 @@ namespace Tabarru.Controllers
             return await charityAccountService.GetCharityDetailsAsync(TokenClaimHelper.GetId(User));
         }
 
+        [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        public async Task<Response> ForgotPassword(ForgotPasswordRequest request)
+        {
+            return await charityAccountService.ForgotPasswordAsync(request.MapToDto());
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<Response> ResetPassword(ResetPasswordRequest request)
+        {
+            return await charityAccountService.ResetPasswordAsync(request.MapToDto());
+        }
+
         /// <summary>
         ///  for testing purpose
         /// </summary>

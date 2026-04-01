@@ -18,7 +18,6 @@
 
 
   <ItemGroup>
-    <Folder Include="HtmlTemplates\" />
     <Folder Include="Seeder\" />
   </ItemGroup>
 

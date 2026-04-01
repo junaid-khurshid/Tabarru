@@ -63,6 +63,7 @@ namespace Tabarru.Repositories.DatabaseContext
         public DbSet<RecurringPaymentDetail> RecurringPaymentDetails { get; set; }
         public DbSet<MembershipDetail> MembershipDetails { get; set; }
         public DbSet<StudentFormDetail> StudentFormDetails { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
         public override int SaveChanges()
         {

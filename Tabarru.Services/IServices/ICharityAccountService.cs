@@ -13,5 +13,8 @@ namespace Tabarru.Services.IServices
         Task<Response> AssignPackageAsync(CharityPackageUpdateDto dto);
         Task<Response<CharityReadDto>> GetCharityDetailsAsync(string ChairtyId);
         Task<Response> UpdateCharityDetailsAsync(UpdateCharityDetailsDto request);
+        Task<Response> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto);
+
+        Task<Response> ResetPasswordAsync(ResetPasswordDto resetPasswordDto);
     }
 }

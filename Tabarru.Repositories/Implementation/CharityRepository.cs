@@ -22,7 +22,7 @@ namespace Tabarru.Repositories.Implementation
 
         public async Task<Charity> GetByEmailAsync(string email)
         {
-            return await dbStorageContext.Charities.FirstOrDefaultAsync(x => x.Email.Equals(email));
+            return await dbStorageContext.Charities.FirstOrDefaultAsync(x => x.Email.Equals(email) && !x.IsDeleted);
         }
 
         public async Task<Charity> GetByIdAsync(string charityId)

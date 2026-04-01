@@ -60,6 +60,7 @@ namespace Tabarru
             builder.Services.AddScoped<IDonationRepository, DonationRepository>();
             builder.Services.AddScoped<IStudentFormDetailRepository, StudentFormDetailRepository>();
             builder.Services.AddScoped<IMembershipDetailRepository, MembershipDetailRepository>();
+            builder.Services.AddScoped<IPasswordResetRepository, PasswordResetRepository>();
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSingleton<IAuthorizationHandler, ValidateKycStatusPolicy>();
@@ -165,14 +166,14 @@ namespace Tabarru
 
                         // Apply migrations — this creates the __EFMigrationsHistory table
                         await db.Database.MigrateAsync();
-                        Console.WriteLine("[DB Init] Migrations applied ✅");
+                        Console.WriteLine("[DB Init] Migrations applied");
                     }
                     else
                     {
                         Console.WriteLine("[DB Init] Database not found — creating...");
                         // Only create database without skipping migrations
                         await db.Database.MigrateAsync();
-                        Console.WriteLine("[DB Init] Database created and migrations applied ✅");
+                        Console.WriteLine("[DB Init] Database created and migrations applied");
                     }
 
                     // Insert default PackageDetails if empty
