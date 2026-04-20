@@ -117,7 +117,9 @@ namespace Tabarru.Services.Implementation
                         Salt = hashSalt.Item1,
                         Role = charityDetailDto.Role.ToUpper(),
                         EmailVerified = false,
-                        PackageId = "0"
+                        PackageId = "0",
+                        CountryCode = charityDetailDto.CountryCode,
+                        CharityPhoneNumber = charityDetailDto.CharityPhoneNumber,
                     };
 
                     var addRegisterResult = await this.charityRepository.AddAsync(charity);

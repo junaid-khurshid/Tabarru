@@ -20,6 +20,14 @@ namespace Tabarru.Repositories.Models
         [MaxLength(100)]
         public string Role { get; set; }
 
+        [Required]
+        [MaxLength(200)]
+        public string CountryCode { get; set; }
+
+        [Required]
+        [MaxLength(200)]
+        public string CharityPhoneNumber { get; set; }
+
         public CharityKycStatus KycStatus { get; set; }
         public bool EmailVerified { get; set; }
         public bool IsKycVerified { get; set; }

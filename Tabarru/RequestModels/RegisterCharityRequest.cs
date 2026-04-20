@@ -10,7 +10,13 @@ namespace Tabarru.RequestModels
 
         [Required(ErrorMessage = "REQUIRED")]
         public string Password { get; set; }
-       
+
+        [Required(ErrorMessage = "REQUIRED")]
+        public string CountryCode { get; set; }
+
+        [Required(ErrorMessage = "REQUIRED")]
+        public string CharityPhoneNumber { get; set; }
+
         [Required(ErrorMessage = "REQUIRED")]
         public string Role { get; set; }
 
@@ -24,7 +30,9 @@ namespace Tabarru.RequestModels
             {
                 Email = userDetail.Email,
                 Password = userDetail.Password,
-                Role = userDetail.Role
+                Role = userDetail.Role,
+                CountryCode = userDetail.CountryCode,
+                CharityPhoneNumber = userDetail.CharityPhoneNumber
             };
         }
 
