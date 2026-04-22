@@ -120,6 +120,8 @@ namespace Tabarru.Services.Implementation
                         PackageId = "0",
                         CountryCode = charityDetailDto.CountryCode,
                         CharityPhoneNumber = charityDetailDto.CharityPhoneNumber,
+                        ContactPerson = charityDetailDto.ContactPerson,
+                        CharityName = charityDetailDto.CharityName
                     };
 
                     var addRegisterResult = await this.charityRepository.AddAsync(charity);
@@ -303,7 +305,7 @@ namespace Tabarru.Services.Implementation
             charityKyc.LastName = request.LastName;
             charityKyc.CharityName = request.CharityName;
             charityKyc.CharityNumber = request.CharityNumber;
-            charityKyc.CountryCode = request.CountryCode;
+            //charityKyc.CountryCode = request.CountryCode;
 
             if (charityKyc.CharityKycDocuments != null)
             {

@@ -28,6 +28,10 @@ namespace Tabarru.Repositories.Models
         [MaxLength(200)]
         public string CharityPhoneNumber { get; set; }
 
+        public string CharityName { get; set; }
+
+        public string ContactPerson { get; set; }
+
         public CharityKycStatus KycStatus { get; set; }
         public bool EmailVerified { get; set; }
         public bool IsKycVerified { get; set; }

@@ -12,9 +12,11 @@ namespace Tabarru.Services.Models
 
         public CharityKycStatus KycStatus { get; set; }
 
+        public string CharityName { get; set; }
         public string CountryCode { get; set; }
 
         public string CharityPhoneNumber { get; set; }
+        public string ContactPerson { get; set; }
 
         public string Role { get; set; }
     }
@@ -32,6 +34,9 @@ namespace Tabarru.Services.Models
 
         public string CountryCode { get; set; }
         public string CharityPhoneNumber { get; set; }
+
+        public string CharityName { get; set; }
+        public string ContactPerson { get; set; }
 
         public List<CharityKycDetailsReadDto> CharityKycDetails { get; set; }
     }
@@ -51,8 +56,10 @@ namespace Tabarru.Services.Models
                 IsKycVerified = charity.IsKycVerified,
                 IsPackageVerified = charity.IsPackageVerified,
                 PackageId = charity.PackageId,
-                CountryCode  = charity.CountryCode,
+                CountryCode = charity.CountryCode,
                 CharityPhoneNumber = charity.CharityPhoneNumber,
+                CharityName = charity.CharityName,
+                ContactPerson = charity.ContactPerson,
                 CharityKycDetails = charity.CharityKycDetails.Select(k => new CharityKycDetailsReadDto
                 {
                     Id = k.Id,
@@ -62,7 +69,7 @@ namespace Tabarru.Services.Models
                     FirstName = k.FirstName,
                     LastName = k.LastName,
                     CharityName = k.CharityName,
-                    CountryCode = k.CountryCode,
+                    //CountryCode = k.CountryCode,
                     CharityNumber = k.CharityNumber,
                     CharityKycDocuments = k.CharityKycDocuments is null ? null : new CharityKycDocumentsReadDto
                     {

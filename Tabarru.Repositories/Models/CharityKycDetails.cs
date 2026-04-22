@@ -35,10 +35,6 @@ namespace Tabarru.Repositories.Models
 
         [Required]
         [MaxLength(200)]
-        public string CountryCode { get; set; }
-
-        [Required]
-        [MaxLength(200)]
         public string CharityNumber { get; set; }
 
         public virtual CharityKycDocuments CharityKycDocuments { get; set; }

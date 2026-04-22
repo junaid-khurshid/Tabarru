@@ -40,9 +40,13 @@ namespace Tabarru.Repositories.Implementation
         public async Task<IEnumerable<Charity>> GetAllCharitiesAsync()
         {
             return await dbStorageContext.Charities
-                .Include(c => c.CharityKycDetails)
-                .ThenInclude(k => k.CharityKycDocuments)
-                .OrderByDescending(x=> x.CreatedDate)
+                .Include(c => c.CharityKycDetails
+                    .Where(k => !k.IsDeleted))
+                    .ThenInclude(k => k.CharityKycDocuments)
+                .OrderByDescending(c => c.CharityKycDetails
+                    .Where(k => !k.IsDeleted)
+                    .Select(k => k.UpdatedDate)
+                    .Max())
                 .ToListAsync();
         }
 

@@ -20,6 +20,12 @@ namespace Tabarru.RequestModels
         [Required(ErrorMessage = "REQUIRED")]
         public string Role { get; set; }
 
+        [Required(ErrorMessage = "REQUIRED")]
+        public string CharityName { get; set; }
+
+        [Required(ErrorMessage = "REQUIRED")]
+        public string ContactPerson { get; set; }
+
     }
 
     static class CharityDetailExtension
@@ -32,7 +38,9 @@ namespace Tabarru.RequestModels
                 Password = userDetail.Password,
                 Role = userDetail.Role,
                 CountryCode = userDetail.CountryCode,
-                CharityPhoneNumber = userDetail.CharityPhoneNumber
+                CharityPhoneNumber = userDetail.CharityPhoneNumber,
+                CharityName = userDetail.CharityName,
+                ContactPerson = userDetail.ContactPerson
             };
         }
 

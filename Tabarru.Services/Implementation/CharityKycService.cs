@@ -71,7 +71,7 @@ namespace Tabarru.Services.Implementation
                     FirstName = charityKycDto.FirstName,
                     LastName = charityKycDto.LastName,
                     CharityName = charityKycDto.CharityName,
-                    CountryCode = charityKycDto.CountryCode,
+                    //CountryCode = charityKycDto.CountryCode,
                     CharityNumber = charityKycDto.CharityNumber,
                     CharityKycDocuments = new CharityKycDocuments
                     {
