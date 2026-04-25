@@ -33,9 +33,9 @@ namespace Tabarru.Controllers
         }
 
         [HttpPut("re-submit")]
-        public async Task<Response> UpdateKyc([FromForm] CharityKycSubmitRequest dto)
+        public async Task<Response> UpdateKyc([FromForm] CharityKycReSubmitRequest charityKycReSubmitRequest)
         {
-            return await kycService.SubmitKycAsync(TokenClaimHelper.GetId(User), dto.MapToDto());
+            return await kycService.SubmitKycAsync(charityKycReSubmitRequest.CharityId, charityKycReSubmitRequest.MapToDto());
         }
 
         [HttpPost("upload")]
